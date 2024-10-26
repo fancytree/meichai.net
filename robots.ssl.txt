@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://different-yards-137611.framer.app/sitemap.xml
