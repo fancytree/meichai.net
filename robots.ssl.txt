@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://dazzled-taxonomy-505102.framer.app/sitemap.xml
+Sitemap: https://different-yards-137611.framer.app/sitemap.xml
