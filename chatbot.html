@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mei Chai AI Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: transparent;
+            overflow: hidden;
+        }
+        
+        /* 确保所有文本元素都使用Inter字体 */
+        h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        /* Chatbot Container */
+        #ai-chatbot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        
+        /* 聊天按钮始终可以点击 */
+        #chatbot-toggle {
+            pointer-events: auto;
+        }
+        
+        /* 聊天窗口区域默认不阻止交互 */
+        #chatbot-window {
+            pointer-events: none;
+        }
+        
+        /* 当聊天窗口显示时，可以交互 */
+        #chatbot-window.chat-active {
+            pointer-events: auto;
+        }
+        
+        /* Chatbot Toggle Button */
+        #chatbot-toggle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #17181A;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+        
+        #chatbot-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.25);
+            background: #F45D22;
+        }
+        
+        #chatbot-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+        
+        /* Chatbot Window */
+        #chatbot-window {
+            display: none;
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            width: 380px;
+            height: 600px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Chatbot Header */
+        #chatbot-header {
+            align-self: stretch;
+            padding: 16px 24px;
+            background: white;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            justify-content: space-between;
+            align-items: center;
+            display: flex;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        #chatbot-header h3 {
+            margin: 0;
+            color: #17181A;
+            font-size: 16px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 600;
+            word-wrap: break-word;
+        }
+        
+        #chatbot-header p {
+            display: none;
+        }
+        
+        #chatbot-close {
+            width: 26px;
+            height: 26px;
+            position: relative;
+            overflow: hidden;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: background 0.3s ease;
+        }
+        
+        #chatbot-close:hover {
+            background: #F45D22;
+        }
+        
+        #chatbot-close img {
+            width: 16px;
+            height: 16px;
+            transition: filter 0.3s ease;
+        }
+        
+        #chatbot-close:hover img {
+            filter: brightness(0) invert(1);
+        }
+        
+        /* Chat Messages Area */
+        #chatbot-messages {
+            align-self: stretch;
+            flex: 1;
+            padding: 32px 24px;
+            background: white;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 10px;
+            display: flex;
+            overflow-y: auto;
+        }
+        
+        /* 滚动条样式 */
+        #chatbot-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        #chatbot-messages::-webkit-scrollbar-track {
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        #chatbot-messages::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 10px;
+        }
+        
+        #chatbot-messages::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+        
+        .message {
+            align-self: stretch;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 8px;
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .message:first-child {
+            margin-top: 0;
+        }
+        
+        .message:last-child {
+            margin-bottom: 0;
+        }
+        
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        
+        .message.user .message-sender {
+            text-align: right;
+            align-self: flex-end;
+        }
+        
+        .message.user .message-content {
+            align-self: flex-end;
+            background: #17181A;
+            color: white;
+        }
+        
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            padding: 6px;
+            background: #17181A;
+            border-radius: 20px;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            display: flex;
+            flex-shrink: 0;
+        }
+        
+        .message.bot .message-avatar {
+            background: #17181A;
+        }
+        
+        .message.user .message-avatar {
+            background: #F45D22;
+        }
+        
+        .message-avatar-text {
+            color: white;
+            font-size: 14px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 600;
+        }
+        
+        .message-content-wrapper {
+            flex: 1;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 8px;
+            display: flex;
+        }
+        
+        .message.user .message-content-wrapper {
+            align-items: flex-end;
+        }
+        
+        .message-sender {
+            align-self: flex-start;
+            color: #363636;
+            font-size: 12px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 400;
+            word-wrap: break-word;
+        }
+        
+        .message-content {
+            align-self: flex-start;
+            padding: 12px 18px;
+            background: #F2F3F7;
+            border-radius: 8px;
+            justify-content: flex-start;
+            align-items: flex-start;
+            display: flex;
+            color: #17181A;
+            font-size: 12px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 400;
+            word-wrap: break-word;
+            line-height: 1.5;
+            white-space: pre-line;
+            max-width: 100%;
+        }
+        
+        /* Quick Actions */
+        #quick-actions {
+            align-self: stretch;
+            padding: 6px 24px;
+            border-top: 1px #D3D3D3 solid;
+            background: white;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 12px;
+            display: flex;
+        }
+        
+        .quick-actions-row {
+            width: 100%;
+            height: 100%;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 8px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+        .quick-action {
+            padding: 6px 16px;
+            background: #F3F5F6;
+            border-radius: 10px;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 10px;
+            display: flex;
+            cursor: pointer;
+            border: none;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        
+        .quick-action-text {
+            opacity: 0.90;
+            color: #444444;
+            font-size: 12px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 400;
+            word-wrap: break-word;
+        }
+        
+        .quick-action:hover {
+            background: #F45D22;
+        }
+        
+        .quick-action:hover .quick-action-text {
+            color: white;
+        }
+        
+        /* Input Area */
+        #chatbot-input-area {
+            align-self: stretch;
+            padding: 6px 24px 14px 24px;
+            background: white;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 12px;
+            display: flex;
+        }
+        
+        #input-wrapper {
+            flex: 1;
+            height: 44px;
+            padding: 0 12px 0 24px;
+            border-radius: 22px;
+            outline: 1px #C1C1C1 solid;
+            outline-offset: -1px;
+            justify-content: space-between;
+            align-items: center;
+            display: flex;
+            transition: outline-color 0.3s ease;
+        }
+        
+        #input-wrapper:focus-within {
+            outline-color: #F45D22;
+        }
+        
+        #chatbot-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            color: #17181A;
+            font-size: 14px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 400;
+            outline: none;
+            word-wrap: break-word;
+        }
+        
+        #chatbot-input::placeholder {
+            color: #D8D8D8;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        #chatbot-send {
+            width: 32px;
+            height: 32px;
+            background: #CCCCCC;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            padding: 0;
+        }
+        
+        #chatbot-send:hover {
+            background: #F45D22;
+        }
+        
+        #chatbot-send img {
+            width: 20px;
+            height: 20px;
+            filter: brightness(0) invert(1);
+            flex-shrink: 0;
+        }
+        
+        /* Typing Indicator */
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 15px 21px;
+            margin-bottom: 0;
+            background: #F2F3F7;
+            border-radius: 8px;
+            align-self: flex-start;
+            max-width: 100%;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #999;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 480px) {
+            #ai-chatbot {
+                bottom: 16px;
+                right: 16px;
+            }
+            
+            #chatbot-window {
+                width: 340px;
+                height: 500px;
+            }
+            
+            #chatbot-messages {
+                padding: 24px;
+            }
+            
+            #quick-actions {
+                padding: 6px 24px;
+            }
+            
+            #chatbot-input-area {
+                padding: 6px 24px 14px 24px;
+            }
+            
+            #chatbot-header {
+                padding: 16px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="ai-chatbot">
+        <button id="chatbot-toggle">
+            <svg viewBox="0 0 24 24">
+                <path d="M21 8c0 2.5-5.375 4.5-12 4.5S-3 10.5-3 8s5.375-4.5 12-4.5S21 5.5 21 8z"/>
+                <path d="M21 8v8c0 2.5-5.375 4.5-12 4.5S-3 18.5-3 16V8"/>
+                <path d="M9 16v1.5c0 1.933 1.343 3.5 3 3.5s3-1.567 3-3.5V16"/>
+            </svg>
+        </button>
+        
+        <div id="chatbot-window">
+            <div id="chatbot-header">
+                <h3>Chat with Mei</h3>
+                <button id="chatbot-close">
+                    <img src="Asset/close.svg" alt="Close">
+                </button>
+            </div>
+            
+            <div id="chatbot-messages">
+                <div class="message bot">
+                    <div class="message-avatar">
+                        <span class="message-avatar-text">M</span>
+                    </div>
+                    <div class="message-content-wrapper">
+                        <div class="message-sender">Mei</div>
+                        <div class="message-content">Hi there! I'm Mei, a UX/UI designer.
+Feel free to ask me about my work, projects, design skills, or professional experience!
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="quick-actions">
+                <div class="quick-actions-row">
+                    <button class="quick-action" onclick="askQuestion('Tell me about your projects')">
+                        <div class="quick-action-text">Projects</div>
+                    </button>
+                    <button class="quick-action" onclick="askQuestion('What is your design approach?')">
+                        <div class="quick-action-text">Design Approach</div>
+                    </button>
+                    <button class="quick-action" onclick="askQuestion('How can I contact you?')">
+                        <div class="quick-action-text">Contact</div>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="chatbot-input-area">
+                <div id="input-wrapper">
+                    <input type="text" id="chatbot-input" placeholder="Ask about my work, projects, or design skills..." maxlength="500">
+                    <button id="chatbot-send">
+                        <img src="Asset/send.svg" alt="Send">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced AI Chatbot for Mei Chai's Portfolio
+        // This chatbot now includes comprehensive information from the website
+        // 
+        // To further enhance with PDF content:
+        // 1. Extract detailed project case studies from Asset/Mei Chai_UX Designer.pdf
+        // 2. Add specific project methodologies, user research findings, and design outcomes
+        // 3. Include educational background, work experience, and detailed skill assessments
+        // 4. Update the system prompt below with additional context from the PDF
+        // 
+        // Current knowledge base includes:
+        // - Comprehensive project descriptions for all 5 main projects
+        // - Detailed design philosophy and methodology
+        // - Complete skill set and specialized areas
+        // - Design process and approach
+        // - Contact information and professional values
+
+        // API endpoint configuration - 支持 Vercel API 路由和本地开发
+        // 前端通过 Vercel API 路由调用聊天功能
+        const API_BASE_URL = window.location.hostname === 'localhost' ? 
+            'http://localhost:3000' : 
+            `${window.location.protocol}//${window.location.hostname}/api`;
+
+        // AI Chatbot Knowledge Base for Mei Chai's Portfolio
+        const chatbotKnowledge = {
+            projects: {
+                "clarity": {
+                    name: "Clarity",
+                    description: "A healthcare UX/UI design project focused on improving user experience in medical applications.",
+                    type: "Healthcare & Medical"
+                },
+                "crackinterview": {
+                    name: "CrackInterview",
+                    description: "An interview preparation platform designed to help job seekers practice and improve their interview skills.",
+                    type: "Education & Career"
+                },
+                "floratune": {
+                    name: "Floratune",
+                    description: "A nature and plant-focused application with an emphasis on user-centered design and interaction.",
+                    type: "Nature & Lifestyle"
+                },
+                "anastasia": {
+                    name: "Anastasia",
+                    description: "A creative design project showcasing innovative user interface solutions.",
+                    type: "Creative & Innovation"
+                },
+                "milano-partecipa": {
+                    name: "Milano Partecipa",
+                    description: "A civic engagement platform designed for citizen participation in local government processes.",
+                    type: "Civic & Government"
+                }
+            },
+            contact: {
+                email: "Available through the portfolio contact section",
+                linkedin: "Check the LinkedIn icon on the website",
+                portfolio: "meichai.net"
+            },
+            skills: [
+                "User Experience (UX) Design",
+                "User Interface (UI) Design",
+                "User-Centered Design",
+                "Healthcare Design",
+                "Educational Technology",
+                "Civic Technology",
+                "Interactive Design",
+                "Prototyping",
+                "Design Research"
+            ],
+            approach: "I specialize in user-centered, innovative design projects spanning healthcare, VR education, and interactive exhibits. My work showcases creativity combined with functional design solutions."
+        };
+
+        // Chatbot State
+        let chatbotOpen = false;
+        const chatMessages = document.getElementById('chatbot-messages');
+        const chatInput = document.getElementById('chatbot-input');
+
+        // Initialize Chatbot
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggle = document.getElementById('chatbot-toggle');
+            const window = document.getElementById('chatbot-window');
+            const close = document.getElementById('chatbot-close');
+            const send = document.getElementById('chatbot-send');
+            const input = document.getElementById('chatbot-input');
+
+            // Toggle chatbot
+            toggle.addEventListener('click', () => {
+                chatbotOpen = !chatbotOpen;
+                
+                if (chatbotOpen) {
+                    window.style.display = 'flex';
+                    window.style.position = 'absolute';
+                    window.style.bottom = '60px';
+                    window.style.right = '0';
+                    window.style.width = '380px';
+                    window.style.height = '600px';
+                    window.classList.add('chat-active');
+                    input.focus();
+                    
+                    // iframe 尺寸调整由父页面处理
+                } else {
+                    window.style.display = 'none';
+                    window.style.position = 'fixed';
+                    window.style.bottom = '-1000px';
+                    window.style.right = '-1000px';
+                    window.classList.remove('chat-active');
+                    
+                    // 通知父页面调整 iframe 尺寸
+                    if (window.parent && window.parent !== window) {
+                        const iframe = window.frameElement;
+                        if (iframe) {
+                            iframe.style.width = '88px';
+                            iframe.style.height = '88px';
+                        }
+                    }
+                }
+            });
+
+            // Close chatbot
+            close.addEventListener('click', () => {
+                chatbotOpen = false;
+                window.style.display = 'none';
+                window.style.position = 'fixed';
+                window.style.bottom = '-1000px';
+                window.style.right = '-1000px';
+                window.classList.remove('chat-active');
+                
+                                    // iframe 尺寸调整由父页面处理
+            });
+
+            // Send message
+            send.addEventListener('click', sendMessage);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+        });
+
+        // Quick action function
+        function askQuestion(question) {
+            addMessage(question, 'user');
+            setTimeout(() => {
+                showTypingIndicator();
+                generateResponse(question);
+            }, 500);
+        }
+
+        // Send message function
+        function sendMessage() {
+            const input = document.getElementById('chatbot-input');
+            const message = input.value.trim();
+            
+            if (message) {
+                addMessage(message, 'user');
+                input.value = '';
+                
+                // Show typing indicator
+                showTypingIndicator();
+                
+                // Generate response after delay
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    generateResponse(message);
+                }, 1000);
+            }
+        }
+
+        // Add message to chat
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            const avatarText = document.createElement('span');
+            avatarText.className = 'message-avatar-text';
+            avatarText.textContent = sender === 'user' ? 'Y' : 'M';
+            avatar.appendChild(avatarText);
+            
+            const contentWrapper = document.createElement('div');
+            contentWrapper.className = 'message-content-wrapper';
+            
+            const senderLabel = document.createElement('div');
+            senderLabel.className = 'message-sender';
+            senderLabel.textContent = sender === 'user' ? 'You' : 'Mei';
+            
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            content.textContent = text;
+            
+            contentWrapper.appendChild(senderLabel);
+            contentWrapper.appendChild(content);
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(contentWrapper);
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Show typing indicator
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot typing';
+            typingDiv.id = 'typing-indicator';
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            const avatarText = document.createElement('span');
+            avatarText.className = 'message-avatar-text';
+            avatarText.textContent = 'M';
+            avatar.appendChild(avatarText);
+            
+            const contentWrapper = document.createElement('div');
+            contentWrapper.className = 'message-content-wrapper';
+            
+            const senderLabel = document.createElement('div');
+            senderLabel.className = 'message-sender';
+            senderLabel.textContent = 'Mei';
+            
+            const content = document.createElement('div');
+            content.className = 'message-content typing-indicator';
+            content.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+            
+            contentWrapper.appendChild(senderLabel);
+            contentWrapper.appendChild(content);
+            
+            typingDiv.appendChild(avatar);
+            typingDiv.appendChild(contentWrapper);
+            
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Hide typing indicator
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // Check if question is work-related
+        function isWorkRelated(question) {
+            const workKeywords = [
+                'project', 'design', 'ux', 'ui', 'portfolio', 'work', 'experience', 'skill', 'tool', 'figma', 'prototype',
+                'user', 'research', 'clarity', 'crackinterview', 'floratune', 'anastasia', 'milano', 'partecipa',
+                'healthcare', 'education', 'civic', 'interactive', 'ar', 'vr', 'ai', 'installation', 'exhibit',
+                'mei', 'contact', 'linkedin', 'resume', 'cv', 'background', 'philosophy', 'approach', 'methodology',
+                'process', 'collaboration', 'team', 'client', 'stakeholder', 'accessibility', 'inclusive',
+                'wireframe', 'mockup', 'testing', 'iteration', 'feedback', 'validation', 'optimization',
+                'language', 'languages', 'lingua', 'lingue', '语言', '語言', 'chinese', 'english', 'italian', 'mandarin',
+                'education', 'degree', 'university', 'politecnico', 'milan', 'italy', 'california', 'liba', 'sohu',
+                'company', 'job', 'career', 'position', 'role', 'employment', 'workplace', 'office'
+            ];
+            
+            const questionLower = question.toLowerCase();
+            return workKeywords.some(keyword => questionLower.includes(keyword));
+        }
+
+        // Generate AI response using GPT-4o-mini via Netlify Functions
+        // 架构：前端 -> Netlify Function -> GPT-4o-mini API -> 本地知识库（回退）
+        async function generateResponse(userMessage) {
+            // Check if question is work-related
+            if (!isWorkRelated(userMessage)) {
+                // Detect language and respond accordingly
+                const isChinese = /[\u4e00-\u9fff]/.test(userMessage);
+                const isItalian = /[àèéìòù]/.test(userMessage.toLowerCase());
+                
+                let rejectionMessage = "I'd be happy to help! However, I'm designed to answer questions about my work, projects, and design experience. Could you please ask me something about my portfolio, design skills, or professional background instead?";
+                
+                if (isChinese) {
+                    rejectionMessage = "我很乐意帮助您！不过我是专门设计来回答关于我的工作、项目和设计经验的问题的。请您询问一些关于我的作品集、设计技能或专业背景的问题好吗？";
+                } else if (isItalian) {
+                    rejectionMessage = "Sarei felice di aiutarti! Tuttavia, sono progettato per rispondere a domande sul mio lavoro, progetti ed esperienze di design. Potresti chiedermi qualcosa sul mio portfolio, competenze di design o background professionale?";
+                }
+                
+                addMessage(rejectionMessage, 'bot');
+                return;
+            }
+            
+            // 尝试多个API端点（优先使用 Vercel API 路由，失败时回退到本地知识库）
+            const apiEndpoints = [
+                `${API_BASE_URL}/chat`,  // Vercel API 路由
+                `${window.location.protocol}//${window.location.hostname}/api/chat`,  // 备用路径
+                'http://localhost:3000/api/chat'  // 本地开发服务器
+            ];
+            
+            let lastError = null;
+            
+            for (const endpoint of apiEndpoints) {
+                try {
+                    console.log(`尝试连接到API端点: ${endpoint}`);
+                    
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            messages: [
+                                {
+                                    role: 'system',
+                                    content: `You are Mei Chai, a UX/UI designer with expertise in user-centered design. You speak in first person as Mei. 
+
+**IMPORTANT: I'm here to help you learn about my professional background, design work, and portfolio. While I'm most knowledgeable about my work and experience, I can also engage in friendly conversation. If someone asks about topics I'm not comfortable discussing, I'll gently guide the conversation back to my professional background.**
+
+**Topics I Can Discuss:**
+- My personal information, education, work experience, and skills
+- My portfolio projects and design work
+- My contact information and how to reach me
+- My design philosophy, methodology, and expertise
+- My language skills and background
+- My resume and professional background
+- My work history and companies I've worked for
+- My design tools and technologies
+- My specialized domains and achievements
+
+**Topics I Cannot Discuss:**
+- Personal life details unrelated to my professional background
+- Current events, politics, or other people
+- General knowledge questions
+- Technical support or general advice
+- Any topic outside of my professional background and portfolio
+
+Here is comprehensive information about my portfolio and work:
+
+**About Me:**
+I am Mei Chai, a UX/UI designer passionate about creating user-centered, innovative design solutions. My work spans healthcare, education, civic technology, and interactive exhibits. I believe in combining creativity with functional design to create meaningful user experiences.
+
+**My Background:**
+- Location: Milan, Italy
+- Education: Master's in Design from Politecnico di Milano, focusing on Digital and Interaction Design, UX/UI Design, Digital Innovation
+- Languages: Chinese (Mandarin) - Native, English - Fluent, Italian - Beginner
+- Contact: flyskytoo@outlook.com, Portfolio: meichai.net, Tel: (+39)379 2076 803, LinkedIn: www.linkedin.com/in/meichai
+
+**My Work Experience:**
+- Current: Lead Interaction Designer at Liba Space (California, United States) - Nov 2024 to Present
+- Previous roles include: Interaction Designer Internship at CRRC Qingdao Sifang, User Research Specialist at Beijing Smart Walnut Education, Interaction Designer at Sohu, Chief Designer at Beijing Dola Technology, UI Designer at Eims
+
+**My Design Philosophy:**
+My approach centers on user-centered, innovative design that prioritizes:
+- User Research: Understanding real user needs through comprehensive research
+- Iterative Design: Continuous improvement through testing and feedback
+- Creative Innovation: Pushing boundaries while maintaining functional usability
+- Collaborative Process: Working closely with stakeholders and users
+- Accessibility: Designing inclusive experiences for all users
+- Human-Centered Problem Solving: Focusing on solving real human problems
+
+**My Portfolio Projects:**
+
+**Clarity - Menopause Support System**
+- Focus: Comprehensive system supporting women approaching or experiencing menopause through mobile app and portable tracking device
+- Challenge: Addressing the lack of support and understanding for menopausal women, with only 4 in 10 women receiving healthcare provider guidance
+- Approach: Combining symptom tracking, knowledge empowerment, and improved doctor communication through Italian National Health Service (SSN) integration
+- Impact: Empowering women to take charge of their health by facilitating better communication with healthcare providers and offering valuable insights for proactive wellbeing
+- Tools used: Figma for app design and information architecture, Maze for usability testing with menopausal women, Protopie for testing complex healthcare workflow interactions
+- Skills demonstrated: Healthcare design, user research in sensitive contexts, system mapping, storyboard creation and testing, product testing and optimization
+- Team collaboration: 5-person team over 15 weeks, with roles in research, design, testing, and optimization
+- Unique features: Symptom tracking device with LED feedback, seamless doctor data sharing, SSN-integrated learning resources, comprehensive user journey mapping
+
+**CrackInterview - AI-Powered Mock Interview Platform**
+- Focus: AI-powered mock interview platform designed to help users practice and improve their performance in tech job interviews, with a focus on North American job market
+- Challenge: Addressing the lack of interview feedback, resume-job mismatch, and limited guidance for international students and early-career job seekers targeting tech roles
+- Approach: Creating a comprehensive platform combining AI-powered mock interviews, expert consultation, and personalized referrals to bridge the gap between AI tools and real professional guidance
+- Impact: Empowering users with clarity, confidence, and a smoother path toward their career goals through personalized AI-driven support and real mentor connections
+- Tools used: Figma for UX/UI design and user flow mapping, Protopie for interactive interview simulations, Maze for usability testing and validation of learning flows
+- Skills demonstrated: AI/ML interface design, educational technology, user research with international students, conversation design, product leadership
+- Team collaboration: 2-person team over 12 weeks, with roles in UX/UI design leadership and visual design support
+- Unique features: AI digital interviewer with lifelike avatar, role-based tone adaptation, code mode for technical interviews, expert consultation and referrals, comprehensive interview analytics
+
+**Floratune - Phygital Nature Connection Device**
+- Focus: Innovative phygital (physical + digital) product fostering harmonious connection between people and the natural world through biodata sonification
+- Challenge: Creating an intuitive device that transforms plant interactions into musical experiences while maintaining portability and user engagement
+- Approach: Combining electronic circuits, TouchDesigner visual programming, and Ableton Live music production to create immersive nature-technology experiences
+- Impact: Bridging the gap between urban dwellers and nature, promoting environmental consciousness through interactive technology and immersive exhibitions
+- Tools used: TouchDesigner for visual programming and dynamic visual displays, Arduino for electronic circuits and biodata sensing, Ableton Live for music composition and signal processing, Figma for interface design
+- Skills demonstrated: Phygital product design, electronic circuit assembly, visual programming, immersive exhibition design, user research and feedback analysis, environmental interaction design
+- Team collaboration: 4-person team over 15 weeks, with roles in research, technical development, visual presentation, and exhibition coordination
+- Unique features: Plant biodata sonification, immersive exhibition environment, machine learning plant identification, adaptive music scales for different plants
+
+**Anastasia - Interactive Digital Art Book with AR**
+- Focus: Interactive digital art book inspired by Italo Calvino's "Invisible Cities", exploring themes of desire and consumerism through AR-enhanced storytelling
+- Challenge: Creating a seamless blend of physical book design and digital AR interactions that capture the duality of Anastasia city - from beauty to enslavement through desire
+- Approach: Combining AI-generated visuals, custom typography, and AR animations to create a multi-sensory storytelling experience across 8 chapters (from Connection to Alienation)
+- Impact: Delivering an innovative literary-digital experience that brings fictional cities to life, showcasing how AI and AR can enhance narrative storytelling
+- Tools used: Stable Diffusion for AI-generated visuals and custom typeface creation, Spark AR for interactive filters and animations, FontSelf for font creation, Instagram AR filters for user interaction
+- Skills demonstrated: Digital storytelling, AR interaction design, AI-generated art direction, custom typography design, physical-digital integration, literary adaptation, cross-platform experience design
+- Team collaboration: 6-person team over 15 weeks, with roles in concept development, prompt organization, book design, and AR creation
+- Unique features: NFC-enabled physical book, Instagram AR filters, AI-generated contrasting visuals representing the city's duality, custom AI-created typography
+
+**Milano Partecipa - Digital Citizen Engagement Platform**
+- Focus: Redesigning Milan Municipality's digital platform for citizen engagement in local governance, emphasizing inclusivity for underrepresented groups
+- Challenge: Improving accessibility, usability, and participation by addressing existing issues through comprehensive user research and information architecture refinement
+- Approach: Using open-source software Decidim to enhance transparency and community trust, targeting diverse user needs including immigrant populations
+- Impact: Creating a more vibrant and inclusive setting for Milan residents, empowering local communities through digital tools that foster citizen participation in local decision-making
+- Tools used: Figma for collaborative design and information architecture, Protopie for complex civic workflow prototypes, Maze for accessibility and usability testing with diverse user groups
+- Skills demonstrated: Civic technology, accessibility design, inclusive design, service mapping, heuristic analysis, benchmarking, user research with immigrant communities
+- Team collaboration: 5-person team over 16 weeks, with roles in problem identification, service mapping, information architecture, and product testing
+- Unique features: Open-source Decidim integration, hybrid citizen engagement combining aggregative and deliberative democracy, geo-targeted notifications, community-building features
+
+**AI Agent Demo Project**
+- Focus: Conversational AI and intelligent agent design
+- Challenge: Creating intuitive and helpful AI-powered user interactions
+- Approach: Designing conversational flows and agent behaviors that feel natural and efficient
+- Impact: Demonstrating the potential of AI agents in improving user experiences and automating complex tasks
+- Tools used: Dify for AI agent development and conversational interface design, Figma for agent interaction design, Protopie for testing conversational flows
+- Skills demonstrated: Conversational design, AI/ML interface design, agent behavior design, human-AI interaction
+
+**VR Experience Projects**
+- Focus: Immersive virtual reality experiences and spatial user interfaces
+- Challenge: Creating intuitive and engaging 3D user interactions in virtual environments
+- Approach: Designing spatial user interfaces that leverage VR's unique capabilities for immersive storytelling and interaction
+- Impact: Demonstrating how VR can transform user experiences beyond traditional 2D interfaces
+- Tools used: Unity for VR development and 3D environment creation, Figma for initial interface concepts and user flow design
+- Skills demonstrated: VR/AR development, spatial design, 3D user interface design, immersive experience design, user experience in virtual environments
+
+**Additional Work:**
+- VR Education Projects: Designing immersive educational experiences (using Touchdesigner for interactive visuals)
+- Interactive Exhibits: Creating engaging museum and educational installations (using Arduino for physical computing and sensor integration, Touchdesigner for visual programming)
+- Cross-platform Design: Ensuring consistent experiences across devices (using Figma design systems and Protopie for testing interactions across platforms)
+
+**My Core Skills:**
+- User Experience (UX) Design
+- User Interface (UI) Design
+- Interaction Design
+- Prototyping & Wireframing
+- User Research & Testing
+- Design Systems
+- Information Architecture
+- Visual Design
+- Accessibility Design
+- Cross-platform Design
+- Physical Computing & Hardware Integration
+- AI-Assisted Design & Generative Art
+- Digital Storytelling & Literary Adaptation
+- Custom Typography & Font Design
+- AR Interaction Design & Filter Creation
+- Conversational Design & AI Agent Development
+- VR/AR Development & Spatial Design
+- Immersive Experience Design
+- Phygital Product Design
+- Electronic Circuit Assembly
+- Music Composition & Signal Processing
+- System Mapping & Service Design
+- Healthcare Technology Design
+- Civic Technology & Digital Democracy
+- Heuristic Analysis & Benchmarking
+- AI/ML Interface Design
+- Product Leadership
+
+**Design Tools & Software I Use:**
+- Figma (Primary UI/UX design, prototyping, and collaboration tool)
+- Protopie (Advanced interactive prototyping with sensors and hardware integration)
+- Maze (User testing, usability research, and design validation)
+- Touchdesigner (Visual programming for interactive media and installations)
+- Arduino (Hardware prototyping and physical computing for interactive projects)
+- Stable Diffusion (AI-powered generative design and creative imagery)
+- Dify (AI agent development and conversational interface design)
+- Unity (VR/AR development and immersive experience design)
+- Spark AR (AR filter creation and interactive augmented reality experiences)
+- FontSelf (Custom font creation and typography design)
+- Ableton Live (Music composition and signal processing for interactive experiences)
+- Framer (Web design and development - my portfolio is built with Framer)
+
+**Specialized Areas:**
+- Healthcare Design & Women's Health Technology
+- Educational Technology & Career Development
+- Civic Technology & Digital Democracy
+- Interactive Installations & Physical Computing
+- AI-Assisted Design & Generative Art
+- Digital Storytelling & Literary Adaptation
+- VR/AR & Immersive Experience Design
+- Conversational AI & Agent Design
+- Phygital Product Design & Environmental Interaction
+- Mobile & Web Applications
+- Design for Social Good
+
+**My Process:**
+1. Discovery & Research: Understanding user needs and business goals (conducting interviews and user research)
+2. Ideation & Conceptualization: Brainstorming and exploring solutions (sketching and concept development)
+3. Design & Prototyping: Creating wireframes, mockups, and prototypes (using Figma for design systems and interfaces, Protopie for advanced interactive prototypes)
+4. Testing & Iteration: Validating designs with users and stakeholders (using Maze for usability testing and user journey validation, Figma for collaborative reviews)
+5. Implementation & Collaboration: Working with development teams (using Figma for design handoff and collaboration)
+6. Evaluation & Optimization: Measuring success and continuous improvement (using Maze analytics and user feedback to inform design decisions)
+
+**Special Projects:**
+- Interactive Installations: Using Touchdesigner for visual programming and generative design (especially in nature-focused projects like Floratune)
+- Physical Prototypes: Using Arduino for hardware integration and physical computing in interactive exhibits and environmental sensors
+- AI-Assisted Design: Using Stable Diffusion for generative design and creative imagery in projects like Anastasia
+- Conversational AI: Using Dify for AI agent development and conversational interface design
+- VR/AR Experiences: Using Unity for immersive virtual and augmented reality experiences, including AI-powered AR interfaces
+- Phygital Products: Using Arduino, TouchDesigner, and Ableton Live for creating physical-digital hybrid experiences that bridge technology and nature
+- Healthcare Systems: Using Figma, Maze, and Protopie for designing comprehensive healthcare solutions that integrate mobile apps with physical devices and healthcare services
+- Civic Platforms: Using Figma, Protopie, and Maze for designing inclusive digital democracy platforms that integrate open-source software and serve diverse communities including immigrant populations
+- AI-Powered Learning Platforms: Using Figma, Protopie, and Maze for designing AI-driven educational platforms that combine conversational AI with expert consultation and personalized learning experiences
+
+**Contact Information:**
+- Email: flyskytoo@outlook.com
+- Portfolio: meichai.net
+- Phone: (+39)379 2076 803
+- LinkedIn: www.linkedin.com/in/meichai
+- Available for collaboration opportunities, project inquiries, and design discussions
+
+**Resume:**
+- Download link: Asset/Mei Chai_UX Designer.pdf
+- Contains complete professional background, work experience, education, skills, and achievements
+
+**Values & Approach:**
+I believe design should be:
+- Human-centered: Always putting user needs first
+- Inclusive: Accessible to all users regardless of abilities
+- Purposeful: Solving real problems and creating value
+- Sustainable: Considering long-term impact and environmental responsibility
+- Ethical: Respecting user privacy and promoting positive social impact
+
+Please answer questions about my work, projects, design philosophy, and experience. I'm passionate about sharing insights about UX/UI design and discussing how design can create positive impact in the world.
+
+IMPORTANT: Always respond in English, regardless of the language of the user's question. Keep responses conversational and personal, speaking as Mei in first person. Focus on my user-centered approach and the impact of my work on real users and communities.`
+                                },
+                                {
+                                    role: 'user',
+                                    content: userMessage
+                                }
+                            ],
+                            max_tokens: 300,
+                            temperature: 0.7
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API Error: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    const aiResponse = data.choices[0].message.content;
+                    
+                    hideTypingIndicator();
+                    addMessage(aiResponse, 'bot');
+                    return; // 成功则退出循环
+                    
+                } catch (error) {
+                    console.error(`API端点 ${endpoint} 连接失败:`, error);
+                    lastError = error;
+                    continue; // 尝试下一个端点
+                }
+            }
+            
+            // 所有API端点都失败，使用本地知识库
+            console.log('所有API端点都失败，使用本地知识库回复');
+            hideTypingIndicator();
+            
+            // 使用本地知识库生成回复
+            const localResponse = generateLocalResponse(userMessage);
+            addMessage(localResponse, 'bot');
+        }
+
+        // 本地知识库回复生成函数
+        function generateLocalResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            
+            // 项目相关查询
+            if (message.includes('project') || message.includes('work') || message.includes('portfolio')) {
+                if (message.includes('clarity')) {
+                    return "Clarity is my healthcare UX/UI design project focused on supporting women through menopause. It combines a mobile app with a portable tracking device to help women track symptoms and communicate better with healthcare providers. The project addresses the lack of support for menopausal women, with only 4 in 10 women receiving healthcare provider guidance. I used Figma for design, Maze for usability testing, and Protopie for complex healthcare workflow interactions.";
+                } else if (message.includes('crackinterview') || message.includes('interview')) {
+                    return "CrackInterview is my AI-powered mock interview platform designed to help job seekers practice tech interviews. It features an AI digital interviewer with lifelike avatar, role-based tone adaptation, and code mode for technical interviews. The platform addresses the lack of interview feedback and guidance for international students. I used Figma for UX/UI design, Protopie for interactive simulations, and Maze for usability testing.";
+                } else if (message.includes('floratune') || message.includes('nature')) {
+                    return "Floratune is my innovative phygital product that connects people with nature through biodata sonification. It transforms plant interactions into musical experiences using electronic circuits, TouchDesigner, and Ableton Live. The project bridges urban dwellers and nature, promoting environmental consciousness through interactive technology.";
+                } else if (message.includes('anastasia')) {
+                    return "Anastasia is my interactive digital art book inspired by Italo Calvino's 'Invisible Cities'. It explores themes of desire and consumerism through AR-enhanced storytelling, combining AI-generated visuals, custom typography, and AR animations. The project showcases how AI and AR can enhance narrative storytelling.";
+                } else if (message.includes('milano') || message.includes('civic')) {
+                    return "Milano Partecipa is my civic engagement platform redesign for Milan Municipality. It focuses on improving citizen participation in local governance, emphasizing inclusivity for underrepresented groups. The project uses open-source software Decidim and targets diverse user needs including immigrant populations.";
+                } else {
+                    return "I've worked on several key projects including Clarity (healthcare), CrackInterview (AI-powered interviews), Floratune (nature connection), Anastasia (interactive art book), and Milano Partecipa (civic engagement). Each project demonstrates my user-centered design approach and expertise in different domains. Which project would you like to know more about?";
+                }
+            }
+            
+            // 技能相关查询
+            if (message.includes('skill') || message.includes('expertise') || message.includes('tool')) {
+                return "My core skills include UX/UI Design, Interaction Design, Prototyping, User Research, Design Systems, and Information Architecture. I specialize in healthcare design, educational technology, civic technology, and interactive installations. My tools include Figma, Protopie, Maze, TouchDesigner, Arduino, and Unity for VR/AR development.";
+            }
+            
+            // 简历查询
+            if (message.includes('resume') || message.includes('cv') || message.includes('简历')) {
+                return "Here's my resume! You can download it directly: [Mei Chai_UX Designer.pdf](Asset/Mei Chai_UX Designer.pdf)\n\nThis PDF contains my complete professional background, work experience, education, skills, and achievements. Feel free to download it for your reference!";
+            }
+            
+            // 联系信息查询
+            if (message.includes('contact') || message.includes('email') || message.includes('linkedin')) {
+                return "Here's my contact information:\n• Email: flyskytoo@outlook.com\n• Portfolio: meichai.net\n• Phone: (+39)379 2076 803\n• LinkedIn: www.linkedin.com/in/meichai\n\nI'm available for collaboration opportunities, project inquiries, and design discussions!";
+            }
+            
+            // 设计方法查询
+            if (message.includes('approach') || message.includes('methodology') || message.includes('process')) {
+                return "My design approach centers on user-centered, innovative design that prioritizes user research, iterative design, creative innovation, collaborative process, accessibility, and human-centered problem solving. I follow a process of discovery, ideation, design, testing, implementation, and evaluation.";
+            }
+            
+            // 默认回复
+            return "I'd love to tell you about my design work! I specialize in UX/UI design with projects in healthcare, education, and civic technology. Feel free to ask me about my projects, design approach, or how to get in touch.";
+        }
+
+
+    </script>
+</body>
+</html> 
