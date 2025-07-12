@@ -76,6 +76,21 @@
             height: 24px;
             fill: white;
         }
+
+        #cookie-monster-3d {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            background: transparent;
+        }
+
+        #spline-canvas {
+            width: 100% !important;
+            height: 100% !important;
+            border-radius: 50%;
+            outline: none;
+        }
         
         /* Chatbot Window */
         #chatbot-window {
@@ -473,11 +488,7 @@
 <body>
     <div id="ai-chatbot">
         <button id="chatbot-toggle">
-            <svg viewBox="0 0 24 24">
-                <path d="M21 8c0 2.5-5.375 4.5-12 4.5S-3 10.5-3 8s5.375-4.5 12-4.5S21 5.5 21 8z"/>
-                <path d="M21 8v8c0 2.5-5.375 4.5-12 4.5S-3 18.5-3 16V8"/>
-                <path d="M9 16v1.5c0 1.933 1.343 3.5 3 3.5s3-1.567 3-3.5V16"/>
-            </svg>
+            <div id="cookie-monster-3d" style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden;"></div>
         </button>
         
         <div id="chatbot-window">
@@ -526,6 +537,12 @@ Feel free to ask me about my work, projects, design skills, or professional expe
             </div>
         </div>
     </div>
+
+    <!-- Spline Runtime -->
+    <script type="module">
+        import { Application } from 'https://unpkg.com/@splinetool/runtime@1.10.27/build/runtime.js';
+        window.SplineApplication = Application;
+    </script>
 
     <script>
         // Enhanced AI Chatbot for Mei Chai's Portfolio
@@ -610,6 +627,44 @@ Feel free to ask me about my work, projects, design skills, or professional expe
             const close = document.getElementById('chatbot-close');
             const send = document.getElementById('chatbot-send');
             const input = document.getElementById('chatbot-input');
+
+            // Initialize Spline 3D model
+            const splineContainer = document.getElementById('cookie-monster-3d');
+            if (splineContainer && window.SplineApplication) {
+                // Create canvas for 3D model
+                const canvas = document.createElement('canvas');
+                canvas.id = 'spline-canvas';
+                canvas.width = 88;
+                canvas.height = 88;
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+                canvas.style.display = 'block';
+                splineContainer.appendChild(canvas);
+
+                // Initialize Spline application
+                const app = new window.SplineApplication(canvas);
+                
+                // Load the scene from your Spline URL
+                // Note: You'll need to replace this with your actual scene data
+                // For now, we'll use a placeholder that loads from your URL
+                fetch('https://prod.spline.design/qtV29sRbD3xgnWw2/scene.splinecode')
+                    .then(response => response.arrayBuffer())
+                    .then(data => {
+                        app.load(data);
+                        console.log('Spline 3D model loaded successfully!');
+                    })
+                    .catch(error => {
+                        console.error('Error loading Spline 3D model:', error);
+                        // Fallback to original SVG if 3D model fails to load
+                        splineContainer.innerHTML = `
+                            <svg viewBox="0 0 24 24" style="width: 100%; height: 100%;">
+                                <path d="M21 8c0 2.5-5.375 4.5-12 4.5S-3 10.5-3 8s5.375-4.5 12-4.5S21 5.5 21 8z"/>
+                                <path d="M21 8v8c0 2.5-5.375 4.5-12 4.5S-3 18.5-3 16V8"/>
+                                <path d="M9 16v1.5c0 1.933 1.343 3.5 3 3.5s3-1.567 3-3.5V16"/>
+                            </svg>
+                        `;
+                    });
+            }
 
             // Toggle chatbot
             toggle.addEventListener('click', () => {
