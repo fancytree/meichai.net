@@ -462,17 +462,10 @@
                 addMessage(message, 'user');
                 messageInput.value = '';
                 
-                // Simulate AI response
+                // 简单的回复提示用户返回主页
                 setTimeout(() => {
-                    const responses = [
-                        "That's a great question! Let me help you with that.",
-                        "I understand what you're asking. Here's my perspective...",
-                        "Based on your question, I'd suggest...",
-                        "That's an interesting question! Here's what I think...",
-                        "Thanks for asking! I'd be happy to share more about that."
-                    ];
-                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                    addMessage(randomResponse, 'bot');
+                    const response = "This page is under construction. Please return to the homepage to use the full chatbot functionality.";
+                    addMessage(response, 'bot');
                 }, 1000);
             }
         }
@@ -481,18 +474,9 @@
             // Add user message
             addMessage(message, 'user');
             
-            // Simulate AI response
+            // 简单的回复提示用户返回主页
             setTimeout(() => {
-                let response = '';
-                if (message.includes('projects')) {
-                    response = "I've worked on several key projects including Clarity (healthcare UX for menopause support), CrackInterview (AI-powered mock interviews), Floratune (nature connection through biodata sonification), Anastasia (interactive AR art book), and Milano Partecipa (civic engagement platform). Each project demonstrates my user-centered design approach. Which project interests you most?";
-                } else if (message.includes('design approach')) {
-                    response = "My design approach centers on user-centered, innovative design that prioritizes user research, iterative design, creative innovation, collaborative process, accessibility, and human-centered problem solving. I believe in combining creativity with functional design to create meaningful user experiences that solve real problems.";
-                } else if (message.includes('contact')) {
-                    response = "Here's my contact information:\n• Email: flyskytoo@outlook.com\n• Portfolio: meichai.net\n• Phone: (+39)379 2076 803\n• LinkedIn: www.linkedin.com/in/meichai\n\nI'm available for collaboration opportunities, project inquiries, and design discussions!";
-                } else {
-                    response = "Thanks for your question! I'd love to tell you about my design work. Feel free to ask me about my projects, design approach, or how to get in touch.";
-                }
+                const response = "This page is under construction. Please return to the homepage to use the full chatbot functionality.";
                 addMessage(response, 'bot');
             }, 1000);
         }

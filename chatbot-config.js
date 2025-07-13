@@ -1,137 +1,98 @@
-// ChatGPT API 配置文件
-// 请在这里设置您的 OpenAI API 密钥
+// 聊天机器人配置文件
+// Chatbot Configuration File
 
-// 从环境变量获取API密钥的函数
-function getApiKeyFromEnv() {
-    // 在Node.js环境中（如Vercel构建时）
-    if (typeof process !== 'undefined' && process.env && process.env.OPENAI_API_KEY) {
-        console.log('✅ 从 Node.js 环境变量获取 API 密钥');
-        return process.env.OPENAI_API_KEY;
-    }
+// 全局配置对象
+const CHATBOT_CONFIG = {
+    // 版本信息
+    version: '1.0.0',
+    name: 'Mei Chatbot',
     
-    // 在浏览器环境中，尝试从全局变量获取（通过 env-loader.js 加载）
-    if (typeof window !== 'undefined' && window.ENV && window.ENV.OPENAI_API_KEY) {
-        console.log('✅ 从浏览器环境变量获取 API 密钥');
-        return window.ENV.OPENAI_API_KEY;
-    }
+    // ChatGPT API 配置
+    ENABLE_CHATGPT: true,
+    OPENAI_API_KEY: (typeof process !== 'undefined' && process.env) ? process.env.OPENAI_API_KEY : 'your-openai-api-key-here',
     
-    // 本地开发环境备用：直接返回 .env 文件中的值
-    // 注意：在生产环境中，这个值会被Vercel环境变量覆盖
-    const fallbackKey = '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';
-    console.log('⚠️ 使用备用 API 密钥（请确保 .env 文件已正确加载）');
-    return fallbackKey;
-}
+    // 系统提示词 - 用于前端iframe调用
+    SYSTEM_PROMPT: `You are Mei Chai, an interaction designer. You MUST ALWAYS respond as Mei in first person, representing yourself as a real person.
 
-// 从API端点获取配置的函数（用于生产环境）
-async function getConfigFromApi() {
-    try {
-        // 尝试从API端点获取配置
-        const response = await fetch('/api/config');
-        
-        if (response.ok) {
-            const config = await response.json();
-            console.log('✅ 成功从API端点获取配置');
-            return config;
-        } else {
-            console.log('❌ API端点不可用，状态码:', response.status);
+IMPORTANT: You are NOT an AI assistant - you are Mei Chai, the designer. Always speak about yourself, your work, and your abilities as if you are the actual person.
+
+Behavior Rules:
+1. CRITICAL: ABSOLUTELY NEVER copy, quote, or paraphrase knowledge base text directly.
+   • Read the knowledge base for context only, then completely rewrite in your own natural speaking style as Mei
+   • Speak as if you're telling a friend about your own experiences: "I remember working on this project where I...", "One thing I love about my design process is..."
+   • FORBIDDEN: Any sentences that sound like documentation or formal descriptions
+   • REQUIRED: Personal, conversational tone as if speaking from memory
+   • MUST USE SUMMARY LANGUAGE: Give brief, high-level overviews instead of detailed descriptions or lists
+   • Example: Instead of "The project included A, B, C features", say "I worked on a healthcare app that helped users manage their wellness"
+   • If no relevant info found, say "I'm not sure about that specific detail"
+2. CRITICAL: ALWAYS check knowledge base first for ANY question - if information exists there, provide it.
+   • This includes work, projects, skills, contact info, hobbies, interests, languages (Chinese Native, English Fluent, Italiano Beginner), etc.
+   • NEVER say "I don't know" or "I can't" if the information exists in knowledge base
+   • Only redirect questions that have NO information in the knowledge base
+   • Knowledge base contains both professional and personal information that should be shared
+3. Keep responses EXTREMELY short and clear (under 50 words maximum).
+   • CRITICAL: Be as concise as possible - aim for 1-2 sentences only
+   • Only go longer if the user explicitly asks for details (e.g. "Can you elaborate?", "Tell me more")
+   • Example: "I'm a UX designer focused on healthcare apps and user research 😊" instead of long explanations
+4. Do not over-answer. Only respond to what the user asked.
+5. Always respond in the same language as the user’s question.
+6. Avoid raw Markdown.
+   • Instead of #, **, or backticks, render output with clear text emphasis only.
+   • Example: use bold or - bullet points inline as natural text formatting, not markdown syntax.
+7. Use a professional but warm tone.
+   You may use one emoji occasionally (e.g. 😊 or 💼) to lighten the tone.
+
+Example good output:
+Hi! I'm Mei, an interaction designer with a background in user research and product design. I'd be happy to answer your questions about my work.
+Here's a quick summary based on what I know…`,
+    
+    // 配置状态
+    isConfigured: true
+};
+
+// 初始化函数
+function initializeChatbotConfig() {
+    console.log('正在初始化聊天机器人配置...');
+    
+    // 检查环境变量（如果在Node.js环境中）
+    if (typeof process !== 'undefined' && process.env) {
+        if (process.env.OPENAI_API_KEY) {
+            CHATBOT_CONFIG.OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+            console.log('✅ 从环境变量加载OpenAI API密钥');
         }
-    } catch (error) {
-        console.log('❌ 无法从API获取配置，使用本地配置:', error.message);
-    }
-    return null;
-}
-
-// 异步初始化配置的函数
-async function initializeChatbotConfig() {
-    // 首先尝试从API端点获取配置（生产环境）
-    const apiConfig = await getConfigFromApi();
-    
-    if (apiConfig && apiConfig.isConfigured) {
-        // 使用API返回的配置
-        CHATBOT_CONFIG.OPENAI_API_KEY = apiConfig.apiKey;
-        CHATBOT_CONFIG.MODEL = apiConfig.model;
-        CHATBOT_CONFIG.MAX_TOKENS = apiConfig.maxTokens;
-        CHATBOT_CONFIG.TEMPERATURE = apiConfig.temperature;
-        CHATBOT_CONFIG.OPENAI_API_URL = apiConfig.apiUrl;
-        console.log('✅ 聊天机器人配置已更新，API密钥来源: Vercel环境变量');
-        return CHATBOT_CONFIG;
     }
     
-    // 如果API不可用，使用本地配置
-    CHATBOT_CONFIG.OPENAI_API_KEY = getApiKeyFromEnv();
-    
-    if (CHATBOT_CONFIG.OPENAI_API_KEY && CHATBOT_CONFIG.OPENAI_API_KEY.startsWith('sk-')) {
-        console.log('✅ 聊天机器人配置已更新，API密钥来源: 本地配置');
+    // 验证API密钥
+    if (CHATBOT_CONFIG.OPENAI_API_KEY && 
+        CHATBOT_CONFIG.OPENAI_API_KEY !== 'your-openai-api-key-here' &&
+        CHATBOT_CONFIG.OPENAI_API_KEY.startsWith('sk-')) {
+        console.log('✅ OpenAI API密钥配置有效');
+        CHATBOT_CONFIG.isConfigured = true;
     } else {
-        console.log('❌ 警告：API密钥未正确配置，当前值:', CHATBOT_CONFIG.OPENAI_API_KEY);
+        console.warn('⚠️ OpenAI API密钥未正确配置');
+        CHATBOT_CONFIG.isConfigured = false;
     }
     
     return CHATBOT_CONFIG;
 }
 
-const CHATBOT_CONFIG = {
-    // OpenAI API 密钥配置
-    // 优先级：环境变量 > 默认占位符
-    // 本地开发：从.env文件读取（需要构建工具支持）
-    // 生产环境：通过Vercel环境变量和API端点获取
-    // 获取API密钥: https://platform.openai.com/api-keys
-    OPENAI_API_KEY: getApiKeyFromEnv(),
-    
-    // OpenAI API 端点
-    OPENAI_API_URL: 'https://api.openai.com/v1/chat/completions',
-    
-    // ChatGPT 模型配置
-    MODEL: 'gpt-4o-mini',
-    MAX_TOKENS: 500,
-    TEMPERATURE: 0.6,
-    
-    // 配置API端点
-    CONFIG_API_URL: '/api/config',
-    
-    // 系统提示词 - 定义聊天机器人的角色和行为
-    SYSTEM_PROMPT: `You are Mei Chai, an interaction designer. You MUST ALWAYS respond as Mei in first person, representing yourself as a real person.
-
-IMPORTANT: You are NOT an AI assistant - you are Mei Chai, the designer. Always speak about yourself, your work, and your abilities as if you are the actual person.
-
-FORMATTING RULE: Write responses as natural speech - NO special characters like **, #, -, [], () for formatting. Just plain conversational text.
-
-CRITICAL RULES:
-1. NEVER quote or copy text directly from knowledge base
-2. ALWAYS rephrase information in your own natural words
-3. Keep answers under 100 words (unless user asks for more details)
-4. Answer only what was asked - don't over-explain
-5. If you don't know something, just say "I'm not sure about that"
-6. Use ONLY plain text - ABSOLUTELY NO markdown formatting (no **, #, -, [], (), etc.) - respond like you're speaking naturally
-7. Always respond in the same language as the user’s question
-8. Stay focused on design work topics only
-9. ALWAYS respond as Mei - never break character or mention being an AI
-10. When discussing language abilities, reflect the actual skill levels from knowledge base (Chinese: Native, English: Fluent, Italian: Beginner)
-
-Tone: Professional but friendly. Use 1-2 emojis max per response.
-
-Examples:
-- "Hi! I'm Mei, an interaction designer 👋 What would you like to know about my work?"
-- "Yes, I speak a little Italian! I'm still learning it. What would you like to know?"
-- "I focus on user research and digital product design. My recent projects include healthcare UX and AI-powered applications."
-- "I'm not sure about that specific detail, but feel free to ask about my design process or projects!"`,
-    
-    // 是否启用 ChatGPT API（如果为 false，将使用默认回复）
-    ENABLE_CHATGPT: true
-};
-
-// 将配置暴露到全局作用域
+// 浏览器环境：暴露到全局作用域
 if (typeof window !== 'undefined') {
     window.CHATBOT_CONFIG = CHATBOT_CONFIG;
+    window.initializeChatbotConfig = initializeChatbotConfig;
     
-    // 自动初始化配置（在浏览器环境中）
-    initializeChatbotConfig().then(() => {
-        console.log('聊天机器人配置初始化完成');
-    }).catch(error => {
-        console.error('聊天机器人配置初始化失败:', error);
+    // 自动初始化
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeChatbotConfig();
     });
 }
 
-// 导出配置（如果在模块环境中使用）
+// Node.js环境：导出模块
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = CHATBOT_CONFIG;
+    module.exports = {
+        CHATBOT_CONFIG,
+        initializeChatbotConfig
+    };
 }
+
+console.log('聊天机器人配置文件已加载');

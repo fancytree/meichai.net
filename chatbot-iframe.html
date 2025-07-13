@@ -7,34 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <script>
-        // 确保环境变量在配置文件之前加载
-        async function loadScriptsInOrder() {
-            // 首先加载环境变量
-            await new Promise((resolve, reject) => {
-                const envScript = document.createElement('script');
-                envScript.src = 'env-loader.js';
-                envScript.onload = resolve;
-                envScript.onerror = reject;
-                document.head.appendChild(envScript);
-            });
-            
-            // 等待环境变量加载完成
-            await new Promise(resolve => setTimeout(resolve, 100));
-            
-            // 然后加载配置文件
-            await new Promise((resolve, reject) => {
-                const configScript = document.createElement('script');
-                configScript.src = 'chatbot-config.js';
-                configScript.onload = resolve;
-                configScript.onerror = reject;
-                document.head.appendChild(configScript);
-            });
-        }
-        
-        // 页面加载时执行
-        loadScriptsInOrder().catch(console.error);
-    </script>
+    <!-- 加载聊天机器人配置 -->
+    <script src="chatbot-config.js"></script>
     <style>
         body, html {
             margin: 0;
@@ -549,11 +523,11 @@
         
         // 等待DOM和脚本完全加载后再初始化
         document.addEventListener('DOMContentLoaded', async () => {
-            // 等待脚本加载完成
+            // 等待配置加载完成
             let retries = 0;
             const maxRetries = 20; // 最多等待10秒
             
-            while ((!window.CHATBOT_CONFIG || !window.ENV) && retries < maxRetries) {
+            while (!window.CHATBOT_CONFIG && retries < maxRetries) {
                 await new Promise(resolve => setTimeout(resolve, 500));
                 retries++;
                 console.log(`等待配置加载... (${retries}/${maxRetries})`);
@@ -564,19 +538,14 @@
                 return;
             }
             
-            await initializeConfig();
-            
             // 验证配置是否正确加载
             console.log('=== 聊天机器人配置验证 ===');
-            console.log('ENV存在:', !!window.ENV);
             console.log('CHATBOT_CONFIG存在:', !!window.CHATBOT_CONFIG);
-            if (window.ENV) {
-                console.log('环境变量API密钥:', window.ENV.OPENAI_API_KEY ? '✅ 已加载' : '❌ 未找到');
-            }
             if (window.CHATBOT_CONFIG) {
                 console.log('API密钥状态:', window.CHATBOT_CONFIG.OPENAI_API_KEY ? 
                     (window.CHATBOT_CONFIG.OPENAI_API_KEY.startsWith('sk-') ? '✅ 有效' : '❌ 无效格式') : 
                     '❌ 未设置');
+                console.log('配置状态:', window.CHATBOT_CONFIG.isConfigured ? '✅ 已配置' : '❌ 未配置');
                 console.log('ChatGPT启用状态:', window.CHATBOT_CONFIG.ENABLE_CHATGPT);
             }
             console.log('=== 配置验证完成 ===');
@@ -593,48 +562,37 @@
             return knowledgeText;
         }
         
-        // 智能回复系统 - 仅使用 ChatGPT API 和 chatbot-config.js 配置
+        // 智能回复系统 - 直接调用后端API
         async function getSmartResponse(message) {
-            // 检查 ChatGPT API 配置
-            if (window.CHATBOT_CONFIG.ENABLE_CHATGPT && 
-                window.CHATBOT_CONFIG.OPENAI_API_KEY && 
-                window.CHATBOT_CONFIG.OPENAI_API_KEY !== 'your-openai-api-key-here' &&
-                window.CHATBOT_CONFIG.OPENAI_API_KEY.startsWith('sk-')) {
-                try {
-                    const response = await callChatGPT(message);
-                    if (response) {
-                        return response;
-                    }
-                } catch (error) {
-                    console.error('ChatGPT API调用失败:', error);
-                    return 'Sorry, I\'m having trouble connecting right now. Please try again later or contact Mei directly at flyskytoo@outlook.com.';
+            try {
+                const response = await callChatGPT(message);
+                if (response) {
+                    return response;
                 }
+                // 如果后端API调用失败，返回友好的错误信息
+                return 'Sorry, I\'m having trouble connecting right now. Please try again later or contact Mei directly at flyskytoo@outlook.com.';
+            } catch (error) {
+                console.error('ChatGPT API调用失败:', error);
+                return 'Sorry, I\'m having trouble connecting right now. Please try again later or contact Mei directly at flyskytoo@outlook.com.';
             }
-            
-            // 如果 ChatGPT API 未配置或禁用，返回配置指导信息
-            return 'Hi! I\'m Mei\'s AI assistant. I need to be properly configured to chat with you.\n\n📋 **Configuration Steps:**\n\n🔹 **For Vercel Production:** Set the `OPENAI_API_KEY` environment variable in your Vercel Dashboard (Settings → Environment Variables), then redeploy.\n\n🔹 **For Local Development:** Add your OpenAI API key to the .env file in the project root.\n\n🔗 Get your API key at: https://platform.openai.com/api-keys\n\nFor now, feel free to contact Mei directly at flyskytoo@outlook.com! 😊';
         }
         
-        // 调用ChatGPT API
+        // 调用聊天API（通过后端服务）
         async function callChatGPT(message) {
             try {
-                console.log('正在调用ChatGPT API...');
+                console.log('正在调用聊天API...');
                 
-                // 获取知识基础内容并构建系统提示
-                const knowledgeBaseContent = getKnowledgeBaseContent();
-                const enhancedSystemPrompt = `${window.CHATBOT_CONFIG.SYSTEM_PROMPT}
-
-Reference information (DO NOT quote directly, rephrase in your own words):
-${knowledgeBaseContent}`;
+                // 直接使用系统提示，不添加知识库内容
+                // 知识库内容将通过AI的训练数据和上下文理解来处理
+                const enhancedSystemPrompt = window.CHATBOT_CONFIG.SYSTEM_PROMPT;
                 
-                const response = await fetch(window.CHATBOT_CONFIG.OPENAI_API_URL, {
+                // 调用本地的 /api/chat 端点
+                const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${window.CHATBOT_CONFIG.OPENAI_API_KEY}`
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        model: window.CHATBOT_CONFIG.MODEL,
                         messages: [
                             {
                                 role: 'system',
@@ -644,9 +602,7 @@ ${knowledgeBaseContent}`;
                                 role: 'user',
                                 content: message
                             }
-                        ],
-                        max_tokens: window.CHATBOT_CONFIG.MAX_TOKENS,
-                        temperature: window.CHATBOT_CONFIG.TEMPERATURE
+                        ]
                     })
                 });
                 
@@ -656,10 +612,10 @@ ${knowledgeBaseContent}`;
                 }
                 
                 const data = await response.json();
-                console.log('ChatGPT API调用成功');
+                console.log('聊天API调用成功');
                 return data.choices[0].message.content.trim();
             } catch (error) {
-                console.error('ChatGPT API调用错误:', error);
+                console.error('聊天API调用错误:', error);
                 return null;
             }
         }
