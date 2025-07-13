@@ -496,10 +496,13 @@
             // 如果API配置加载失败，检查本地配置是否有效
             if (!apiConfigLoaded) {
                 if (window.CHATBOT_CONFIG.OPENAI_API_KEY && 
-                    window.CHATBOT_CONFIG.OPENAI_API_KEY !== 'your-openai-api-key-here') {
+                    window.CHATBOT_CONFIG.OPENAI_API_KEY !== 'your-openai-api-key-here' &&
+                    window.CHATBOT_CONFIG.OPENAI_API_KEY !== 'sk-your-actual-openai-api-key-here' &&
+                    window.CHATBOT_CONFIG.OPENAI_API_KEY.startsWith('sk-')) {
                     console.log('使用本地配置的API key');
                 } else {
                     console.log('警告：API key未配置，聊天机器人将无法正常工作');
+                    console.log('请在 chatbot-config.js 文件中设置您的 OpenAI API key');
                 }
             }
         }
@@ -521,7 +524,11 @@
         // 智能回复系统 - 仅使用 ChatGPT API 和 chatbot-config.js 配置
         async function getSmartResponse(message) {
             // 检查 ChatGPT API 配置
-            if (window.CHATBOT_CONFIG.ENABLE_CHATGPT && window.CHATBOT_CONFIG.OPENAI_API_KEY && window.CHATBOT_CONFIG.OPENAI_API_KEY !== 'your-openai-api-key-here') {
+            if (window.CHATBOT_CONFIG.ENABLE_CHATGPT && 
+                window.CHATBOT_CONFIG.OPENAI_API_KEY && 
+                window.CHATBOT_CONFIG.OPENAI_API_KEY !== 'your-openai-api-key-here' &&
+                window.CHATBOT_CONFIG.OPENAI_API_KEY !== 'sk-your-actual-openai-api-key-here' &&
+                window.CHATBOT_CONFIG.OPENAI_API_KEY.startsWith('sk-')) {
                 try {
                     const response = await callChatGPT(message);
                     if (response) {
@@ -533,8 +540,8 @@
                 }
             }
             
-            // 如果 ChatGPT API 未配置或禁用，返回提示信息
-            return 'Hi! I\'m Mei\'s AI assistant, but I need to be properly configured to chat with you. Please contact Mei directly at flyskytoo@outlook.com for now.';
+            // 如果 ChatGPT API 未配置或禁用，返回配置指导信息
+            return 'Hi! I\'m Mei\'s AI assistant. To chat with me, please configure the OpenAI API key in the chatbot-config.js file. Replace "sk-your-actual-openai-api-key-here" with your real OpenAI API key. You can get one at https://platform.openai.com/api-keys. For now, feel free to contact Mei directly at flyskytoo@outlook.com! 😊';
         }
         
         // 调用ChatGPT API
