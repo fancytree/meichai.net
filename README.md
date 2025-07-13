@@ -104,8 +104,8 @@ The chatbot requires an OpenAI API key to function. Configure it using:
 - See `VERCEL_SETUP.md` for detailed instructions
 
 **For Local Development:**
-- Create a `.env` file in the project root
-- Add: `OPENAI_API_KEY=your-actual-api-key-here`
+- Method 1 (Recommended): Edit `chatbot-config.js` and replace `your-openai-api-key-here` with your actual API key
+- Method 2: Create a `.env` file in the project root and add: `OPENAI_API_KEY=your-actual-api-key-here`
 
 ### Features
 - Responds as "Mei Chai" in first person

@@ -51,8 +51,15 @@ vercel --prod
 
 ## 本地开发配置
 
-对于本地开发，您可以：
+对于本地开发，您有两种配置方式：
 
+### 方式一：直接修改配置文件（推荐）
+1. 打开 `chatbot-config.js` 文件
+2. 找到 `OPENAI_API_KEY: 'your-openai-api-key-here'` 这一行
+3. 将 `your-openai-api-key-here` 替换为您的真实 OpenAI API Key
+4. 保存文件
+
+### 方式二：使用环境变量文件
 1. 在项目根目录创建 `.env` 文件
 2. 添加以下内容：
    ```
@@ -60,7 +67,10 @@ vercel --prod
    ```
 3. 将 `your-actual-openai-api-key-here` 替换为您的真实 API Key
 
-**注意**: `.env` 文件已被添加到 `.gitignore` 中，不会被提交到代码仓库。
+**注意**: 
+- 本地开发时，由于没有Vercel的serverless functions支持，系统会自动使用 `chatbot-config.js` 中的配置
+- `.env` 文件已被添加到 `.gitignore` 中，不会被提交到代码仓库
+- 推荐使用方式一，因为更直接且不依赖环境变量
 
 ## 技术实现说明
 

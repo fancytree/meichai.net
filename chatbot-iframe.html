@@ -464,7 +464,7 @@
         // 使用外部配置文件 chatbot-config.js
         console.log('使用外部配置文件');
         
-        // 从API获取配置信息
+        // 从API获取配置信息（仅在生产环境中有效）
         async function loadConfig() {
             try {
                 const response = await fetch(window.CHATBOT_CONFIG.CONFIG_API_URL);
@@ -477,18 +477,35 @@
                         window.CHATBOT_CONFIG.MAX_TOKENS = config.maxTokens;
                         window.CHATBOT_CONFIG.TEMPERATURE = config.temperature;
                         window.CHATBOT_CONFIG.OPENAI_API_URL = config.apiUrl;
-                        console.log('配置已从API更新');
+                        console.log('配置已从API更新（生产环境）');
+                        return true;
                     }
                 } else {
-                    console.log('无法从API获取配置，使用默认配置');
+                    console.log('API端点不可用，使用本地配置（开发环境）');
                 }
             } catch (error) {
-                console.log('配置API调用失败，使用默认配置:', error);
+                console.log('配置API调用失败，使用本地配置（开发环境）:', error);
             }
+            return false;
         }
         
         // 初始化时加载配置
-        loadConfig();
+        async function initializeConfig() {
+            const apiConfigLoaded = await loadConfig();
+            
+            // 如果API配置加载失败，检查本地配置是否有效
+            if (!apiConfigLoaded) {
+                if (window.CHATBOT_CONFIG.OPENAI_API_KEY && 
+                    window.CHATBOT_CONFIG.OPENAI_API_KEY !== 'your-openai-api-key-here') {
+                    console.log('使用本地配置的API key');
+                } else {
+                    console.log('警告：API key未配置，聊天机器人将无法正常工作');
+                }
+            }
+        }
+        
+        // 执行配置初始化
+        initializeConfig();
         
         // 获取完整知识库内容
         function getKnowledgeBaseContent() {

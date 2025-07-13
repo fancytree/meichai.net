@@ -3,9 +3,10 @@
 
 const CHATBOT_CONFIG = {
     // OpenAI API 密钥配置
-    // 在生产环境中从API端点获取，本地开发使用默认值
+    // 本地开发：请在此处直接设置您的API key
+    // 生产环境：通过Vercel环境变量和API端点获取
     // 获取API密钥: https://platform.openai.com/api-keys
-    OPENAI_API_KEY: 'your-openai-api-key-here',
+    OPENAI_API_KEY: 'your-openai-api-key-here', // 请替换为您的真实API key
     
     // OpenAI API 端点
     OPENAI_API_URL: 'https://api.openai.com/v1/chat/completions',
