@@ -1,12 +1,54 @@
 // ChatGPT API 配置文件
 // 请在这里设置您的 OpenAI API 密钥
 
+// 从环境变量获取API密钥的函数
+function getApiKeyFromEnv() {
+    // 在Node.js环境中（如Vercel构建时）
+    if (typeof process !== 'undefined' && process.env && process.env.OPENAI_API_KEY) {
+        return process.env.OPENAI_API_KEY;
+    }
+    
+    // 在浏览器环境中，尝试从全局变量获取（如果有构建工具注入）
+    if (typeof window !== 'undefined' && window.ENV && window.ENV.OPENAI_API_KEY) {
+        return window.ENV.OPENAI_API_KEY;
+    }
+    
+    // 默认值（占位符）
+    return 'sk-your-actual-openai-api-key-here';
+}
+
+// 异步初始化配置的函数
+function initializeChatbotConfig() {
+    // 等待环境变量加载完成
+    const checkEnvLoaded = () => {
+        return new Promise((resolve) => {
+            const check = () => {
+                if (typeof window !== 'undefined' && window.ENV) {
+                    resolve();
+                } else {
+                    setTimeout(check, 100);
+                }
+            };
+            check();
+        });
+    };
+    
+    return checkEnvLoaded().then(() => {
+        // 重新获取API密钥
+        CHATBOT_CONFIG.OPENAI_API_KEY = getApiKeyFromEnv();
+        console.log('聊天机器人配置已更新，API密钥来源:', 
+            window.ENV && window.ENV.OPENAI_API_KEY ? '.env文件' : '默认配置');
+        return CHATBOT_CONFIG;
+    });
+}
+
 const CHATBOT_CONFIG = {
     // OpenAI API 密钥配置
-    // 本地开发：请在此处直接设置您的API key
+    // 优先级：环境变量 > 默认占位符
+    // 本地开发：从.env文件读取（需要构建工具支持）
     // 生产环境：通过Vercel环境变量和API端点获取
     // 获取API密钥: https://platform.openai.com/api-keys
-    OPENAI_API_KEY: 'sk-your-actual-openai-api-key-here', // 请替换为您的真实API key（格式：sk-xxxxxxxx）
+    OPENAI_API_KEY: getApiKeyFromEnv(),
     
     // OpenAI API 端点
     OPENAI_API_URL: 'https://api.openai.com/v1/chat/completions',

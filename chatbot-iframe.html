@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="env-loader.js"></script>
     <script src="chatbot-config.js"></script>
     <style>
         body, html {
@@ -495,6 +496,16 @@
         
         // 初始化时加载配置
         async function initializeConfig() {
+            // 首先初始化聊天机器人配置（从.env文件加载）
+            if (typeof initializeChatbotConfig === 'function') {
+                try {
+                    await initializeChatbotConfig();
+                    console.log('✅ 聊天机器人配置初始化完成');
+                } catch (error) {
+                    console.warn('⚠️ 聊天机器人配置初始化失败:', error);
+                }
+            }
+            
             const apiConfigLoaded = await loadConfig();
             
             // 如果API配置加载失败，检查本地配置是否有效
@@ -503,10 +514,10 @@
                     window.CHATBOT_CONFIG.OPENAI_API_KEY !== 'your-openai-api-key-here' &&
                     window.CHATBOT_CONFIG.OPENAI_API_KEY !== 'sk-your-actual-openai-api-key-here' &&
                     window.CHATBOT_CONFIG.OPENAI_API_KEY.startsWith('sk-')) {
-                    console.log('使用本地配置的API key');
+                    console.log('✅ 使用本地配置的API key');
                 } else {
-                    console.log('警告：API key未配置，聊天机器人将无法正常工作');
-                    console.log('请在 chatbot-config.js 文件中设置您的 OpenAI API key');
+                    console.log('❌ 警告：API key未配置，聊天机器人将无法正常工作');
+                    console.log('请检查 .env 文件或 chatbot-config.js 文件中的 OpenAI API key 设置');
                 }
             }
         }
