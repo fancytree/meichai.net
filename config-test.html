@@ -151,21 +151,35 @@
                     addResult('✅ API endpoint is accessible', 'success');
                     addResult(`API Response: <pre>${JSON.stringify(config, null, 2)}</pre>`, 'info');
                     
-                    if (config.isConfigured) {
-                        addResult('✅ API endpoint reports configuration is valid', 'success');
+                    if (config.isConfigured && config.apiKey) {
+                        addResult('✅ 配置正确！Vercel环境变量已正确设置', 'success');
+                        addResult(`🔑 API Key格式: ${config.apiKey.substring(0, 7)}...${config.apiKey.substring(config.apiKey.length - 4)}`, 'info');
                     } else {
-                        addResult('❌ API endpoint reports configuration is invalid', 'error');
-                        addResult('💡 Please set OPENAI_API_KEY environment variable in Vercel Dashboard', 'info');
+                        addResult('❌ Vercel环境变量未配置', 'error');
+                        addResult(`<strong>🔧 解决步骤：</strong><br>
+                            1. 登录 <a href="https://vercel.com/dashboard" target="_blank">Vercel Dashboard</a><br>
+                            2. 选择您的项目<br>
+                            3. 进入 <strong>Settings</strong> → <strong>Environment Variables</strong><br>
+                            4. 添加变量：<code>OPENAI_API_KEY</code> = <code>您的OpenAI API密钥</code><br>
+                            5. 选择所有环境 (Production, Preview, Development)<br>
+                            6. <strong>重新部署项目</strong><br>
+                            📝 获取API密钥：<a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a>`, 'info');
                     }
                 } else {
                     addResult(`❌ API endpoint error: ${response.status} ${response.statusText}`, 'error');
                     if (response.status === 404) {
                         addResult('💡 This is normal for local development. API endpoints only work in Vercel.', 'info');
+                    } else {
+                        addResult('🚨 生产环境API端点无法访问，可能的原因：Vercel部署问题、API路由配置错误、网络连接问题', 'error');
                     }
                 }
             } catch (error) {
                 addResult(`❌ API endpoint test failed: ${error.message}`, 'error');
-                addResult('💡 This is normal for local development. API endpoints only work in Vercel.', 'info');
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    addResult('💡 本地开发环境检测到 - 这是正常的，因为本地环境没有Vercel的serverless functions。本地开发请直接修改 chatbot-config.js 文件中的API密钥。', 'info');
+                } else {
+                    addResult('🚨 生产环境API端点无法访问，请检查Vercel部署日志或联系技术支持。', 'error');
+                }
             }
         }
         
