@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Under Construction</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            /* Add position and z-index to lift it above the canvas */
+            position: relative;
+            z-index: 1;
+        }
+        .icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 24px;
+        }
+        .message {
+            font-size: 20px;
+            line-height: 1.5;
+            max-width: 450px;
+        }
+        .home-button {
+            display: inline-block;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 500;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 9999px;
+            transition: background-color 0.2s;
+        }
+        .home-button:hover {
+            background-color: #333333;
+        }
+
+        /* Spline viewer styles */
+        spline-viewer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            cursor: pointer;
+        }
+
+        /* Chatbot styles - 参考 chatbot.html */
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 380px;
+            height: 600px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transform: scale(0.1);
+            transform-origin: bottom right;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: hidden;
+        }
+
+        .chatbot-container.show {
+            transform: scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .chatbot-header {
+            padding: 16px 24px;
+            background: white;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            justify-content: space-between;
+            align-items: center;
+            display: flex;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .chatbot-title {
+            margin: 0;
+            color: #17181A;
+            font-size: 16px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            width: 26px;
+            height: 26px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: background 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #F45D22;
+        }
+
+        .close-btn:hover img {
+            filter: brightness(0) invert(1);
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 32px 24px;
+            background: white;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 10px;
+            display: flex;
+            overflow-y: auto;
+        }
+
+        .chatbot-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chatbot-messages::-webkit-scrollbar-track {
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .chatbot-messages::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 10px;
+        }
+
+        .chatbot-messages::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+
+        .message {
+            align-self: stretch;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 6px;
+            display: flex;
+            margin-bottom: 12px;
+        }
+
+        .message:first-child {
+            margin-top: 0;
+        }
+
+        .message:last-child {
+            margin-bottom: 0;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message.user .message-sender {
+            text-align: right;
+            align-self: flex-end;
+        }
+
+        .message.user .message-content {
+            align-self: flex-end;
+            background: #17181A;
+            color: white;
+            text-align: left;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 32px;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            display: flex;
+            flex-shrink: 0;
+        }
+
+        .message.bot .message-avatar {
+            background: #17181A;
+        }
+
+        .message.user .message-avatar {
+            background: #F45D22;
+        }
+
+        .message-avatar-text {
+            color: white;
+            font-size: 14px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 600;
+        }
+
+        .message-content-wrapper {
+            flex: 1;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 4px;
+            display: flex;
+        }
+
+        .message.user .message-content-wrapper {
+            align-items: flex-end;
+        }
+
+        .message-sender {
+            align-self: flex-start;
+            color: #363636;
+            font-size: 12px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 400;
+        }
+
+        .message-content {
+            align-self: flex-start;
+            padding: 12px 16px;
+            background: #F2F3F7;
+            border-radius: 8px;
+            justify-content: flex-start;
+            align-items: flex-start;
+            display: flex;
+            color: #17181A;
+            font-size: 12px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 400;
+            line-height: 1.5;
+            white-space: pre-line;
+            max-width: 100%;
+            text-align: left;
+        }
+
+        .quick-actions {
+            align-self: stretch;
+            padding: 6px 24px;
+            border-top: 1px #D3D3D3 solid;
+            background: white;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 12px;
+            display: flex;
+        }
+
+        .quick-actions-row {
+            width: 100%;
+            height: 100%;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 8px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .quick-action {
+            padding: 6px 16px;
+            background: #F3F5F6;
+            border-radius: 10px;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 10px;
+            display: flex;
+            cursor: pointer;
+            border: none;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .quick-action-text {
+            opacity: 0.90;
+            color: #444444;
+            font-size: 12px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 400;
+        }
+
+        .quick-action:hover {
+            background: #F45D22;
+        }
+
+        .quick-action:hover .quick-action-text {
+            color: white;
+        }
+
+        .chatbot-input {
+            align-self: stretch;
+            padding: 6px 24px 14px 24px;
+            background: white;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 12px;
+            display: flex;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            height: 44px;
+            padding: 0 12px 0 24px;
+            border-radius: 22px;
+            outline: 1px #C1C1C1 solid;
+            outline-offset: -1px;
+            justify-content: space-between;
+            align-items: center;
+            display: flex;
+            transition: outline-color 0.3s ease;
+        }
+
+        .input-wrapper:focus-within {
+            outline-color: #F45D22;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            color: #17181A;
+            font-size: 14px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 400;
+            outline: none;
+        }
+
+        .chatbot-input input::placeholder {
+            color: #D8D8D8;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .send-btn {
+            width: 32px;
+            height: 32px;
+            background: #CCCCCC;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            padding: 0;
+            font-size: 16px;
+            color: white;
+        }
+
+        .send-btn:hover {
+            background: #F45D22;
+        }
+    </style>
+</head>
+<body>
+
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.27/build/spline-viewer.js"></script>
+    <spline-viewer url="https://prod.spline.design/Sd6383WwqBbXvOku/scene.splinecode" id="spline-viewer"></spline-viewer>
+
+    <!-- Chatbot Container -->
+    <div class="chatbot-container" id="chatbot">
+        <div class="chatbot-header">
+            <h3 class="chatbot-title">Chat with Mei</h3>
+            <button class="close-btn" id="close-chatbot">
+                <img src="Asset/close.svg" alt="Close" style="width: 24px; height: 24px;">
+            </button>
+        </div>
+        <div class="chatbot-messages" id="chatbot-messages">
+            <div class="message bot">
+                <div class="message-avatar">
+                    <img src="Asset/profile.png" alt="Mei" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+                </div>
+                <div class="message-content-wrapper">
+                    <div class="message-sender">Mei</div>
+                    <div class="message-content">Hi there! I'm Mei, a UX/UI designer. Feel free to ask me about my work, projects, design skills, or professional experience!</div>
+                </div>
+            </div>
+        </div>
+        <div class="quick-actions">
+            <div class="quick-actions-row">
+                <button class="quick-action" onclick="sendQuickMessage('Tell me about your projects')">
+                    <span class="quick-action-text">Projects</span>
+                </button>
+                <button class="quick-action" onclick="sendQuickMessage('What is your design approach?')">
+                    <span class="quick-action-text">Design Approach</span>
+                </button>
+                <button class="quick-action" onclick="sendQuickMessage('How can I contact you?')">
+                    <span class="quick-action-text">Contact</span>
+                </button>
+            </div>
+        </div>
+        <div class="chatbot-input">
+            <div class="input-wrapper">
+                <input type="text" id="message-input" placeholder="Ask me about my work..." />
+                <button class="send-btn" id="send-btn">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <img src="Asset/none.svg" alt="Under Construction Icon" class="icon">
+        <p class="message">The page you're looking is under construction<br>Please return to the homepage.</p>
+        <a href="index.html" class="home-button">Go Home</a>
+    </div>
+
+
+
+    <!-- Removed Framer-specific script that was interfering with fixed positioning -->
+
+    <script>
+        // Chatbot functionality
+        const splineViewer = document.getElementById('spline-viewer');
+        const chatbot = document.getElementById('chatbot');
+        const closeChatbot = document.getElementById('close-chatbot');
+        const messageInput = document.getElementById('message-input');
+        const sendBtn = document.getElementById('send-btn');
+        const messagesContainer = document.getElementById('chatbot-messages');
+
+        // Click on Spline viewer to open chatbot
+        splineViewer.addEventListener('click', () => {
+            chatbot.classList.add('show');
+            splineViewer.style.display = 'none';
+        });
+
+        // Close chatbot
+        closeChatbot.addEventListener('click', () => {
+            chatbot.classList.remove('show');
+            splineViewer.style.display = 'block';
+        });
+
+        // Send message function
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (message) {
+                // Add user message
+                addMessage(message, 'user');
+                messageInput.value = '';
+                
+                // Simulate AI response
+                setTimeout(() => {
+                    const responses = [
+                        "That's a great question! Let me help you with that.",
+                        "I understand what you're asking. Here's my perspective...",
+                        "Based on your question, I'd suggest...",
+                        "That's an interesting question! Here's what I think...",
+                        "Thanks for asking! I'd be happy to share more about that."
+                    ];
+                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                    addMessage(randomResponse, 'bot');
+                }, 1000);
+            }
+        }
+
+        function sendQuickMessage(message) {
+            // Add user message
+            addMessage(message, 'user');
+            
+            // Simulate AI response
+            setTimeout(() => {
+                let response = '';
+                if (message.includes('projects')) {
+                    response = "I've worked on several key projects including Clarity (healthcare UX for menopause support), CrackInterview (AI-powered mock interviews), Floratune (nature connection through biodata sonification), Anastasia (interactive AR art book), and Milano Partecipa (civic engagement platform). Each project demonstrates my user-centered design approach. Which project interests you most?";
+                } else if (message.includes('design approach')) {
+                    response = "My design approach centers on user-centered, innovative design that prioritizes user research, iterative design, creative innovation, collaborative process, accessibility, and human-centered problem solving. I believe in combining creativity with functional design to create meaningful user experiences that solve real problems.";
+                } else if (message.includes('contact')) {
+                    response = "Here's my contact information:\n• Email: flyskytoo@outlook.com\n• Portfolio: meichai.net\n• Phone: (+39)379 2076 803\n• LinkedIn: www.linkedin.com/in/meichai\n\nI'm available for collaboration opportunities, project inquiries, and design discussions!";
+                } else {
+                    response = "Thanks for your question! I'd love to tell you about my design work. Feel free to ask me about my projects, design approach, or how to get in touch.";
+                }
+                addMessage(response, 'bot');
+            }, 1000);
+        }
+
+        function addMessage(text, sender) {
+            const messagesContainer = document.getElementById('chatbot-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            if (sender === 'user') {
+                const avatarText = document.createElement('span');
+                avatarText.className = 'message-avatar-text';
+                avatarText.textContent = 'M';
+                avatar.appendChild(avatarText);
+            } else {
+                const avatarImg = document.createElement('img');
+                avatarImg.src = 'Asset/profile.png';
+                avatarImg.alt = 'Mei';
+                avatarImg.style.cssText = 'width: 32px; height: 32px; border-radius: 50%; object-fit: cover;';
+                avatar.appendChild(avatarImg);
+            }
+            
+            const contentWrapper = document.createElement('div');
+            contentWrapper.className = 'message-content-wrapper';
+            
+            const senderDiv = document.createElement('div');
+            senderDiv.className = 'message-sender';
+            senderDiv.textContent = sender === 'user' ? 'Me' : 'Mei';
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = text;
+            
+            contentWrapper.appendChild(senderDiv);
+            contentWrapper.appendChild(contentDiv);
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(contentWrapper);
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Send button click
+        sendBtn.addEventListener('click', sendMessage);
+
+        // Enter key to send
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Close chatbot when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!chatbot.contains(e.target) && !splineViewer.contains(e.target)) {
+                chatbot.classList.remove('show');
+                splineViewer.style.display = 'block';
+            }
+        });
+    </script>
+        
+</body>
+</html>

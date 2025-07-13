@@ -1,0 +1,259 @@
+introduction:
+User Experience Designer specializing in human-centered design research and strategic problem-solving. With expertise in user research, interaction design, and service design, I create meaningful digital experiences that bridge user needs with business objectives. 
+My approach combines deep user insights with systematic design thinking to deliver solutions across healthcare, education, civic technology, and emerging interactive media. Proven track record in leading cross-functional teams, conducting comprehensive user research, and translating complex user behaviors into actionable design strategies that drive measurable impact.
+Embracing change and actively exploring AGI-powered natural human-computer interaction to shape the future of user experience.
+
+---
+
+OTHER INFORMATION
+• Chinese(Native), English(Fluent), Italiano(Beginner)
+
+---
+My hobbies and interests include:
+Hiking, Climbing, Diving, Watching movies and Reading (I’m a big fan of science fiction)
+---
+
+projects:
+I've worked on several key projects including:
+• Clarity - Healthcare UX design for menopause support platform
+• CrackInterview - AI-powered mock interview system with real-time feedback
+• Floratune - Nature connection platform through biodata sonification
+• Anastasia - Interactive AR art book experience
+• Milano Partecipa - Civic engagement platform for community participation
+
+• **Clarity – Menopause Support System**
+An integrated support system designed to empower women approaching or experiencing menopause, combining a mobile application and a wearable symptom-tracking device to address the lack of adequate support and medical guidance.
+- Challenge: Address the gap in menopause-related care and improve health literacy among women (only 4 in 10 currently receive advice from healthcare providers)
+- Solution: Combined symptom tracking, knowledge empowerment, and improved doctor-patient communication, seamlessly integrated with the Italian National Health Service (SSN) to ensure accessibility and relevance
+- Impact: Created a proactive health management solution that enhances communication with healthcare professionals and gives women greater agency over their wellbeing
+- Team: 5 members over 15 weeks
+- My Role: User research, UX/UI design, usability testing, system optimization
+- Tools: Figma (interface design and architecture), Maze (remote usability testing), Protopie (high-fidelity workflow prototyping), Hardware Prototyping (LED-feedback wearable design)
+- Technical Implementation:
+  • Mobile App Design developed in Figma, including UI, flows, and information architecture
+  • Usability Testing conducted via Maze with women in different menopause stages
+  • Workflow Simulation built using Protopie for complex health service scenarios
+  • System Integration connected to Italian SSN for direct collaboration and data handoff
+  • Hardware Prototype designed as physical tracking device with LED feedback signals
+- Key Features: Wearable symptom-tracking device with LED feedback, intuitive mobile interface for symptom logging and education, seamless data sharing with healthcare providers, access to curated learning resources integrated with SSN
+- Expanded Skills: System Mapping & Service Design, Healthcare Technology UX, Women's Health-Centered Design
+- Professional Domain: Healthcare Design & Women's Health Technology - designing comprehensive healthcare ecosystems tailored to underserved women's health needs
+
+• **CrackInterview – AI-Powered Mock Interview Platform**
+An AI-powered mock interview platform designed to help users—especially international students and early-career professionals—prepare for tech job interviews in North America, addressing major pain points such as lack of feedback, resume misalignment, and limited access to mentorship.
+- Challenge: Limited actionable feedback from traditional mock interviews, disconnect between candidate profiles and job market expectations, inaccessible or inconsistent career guidance for non-native and junior applicants
+- Solution: Created a holistic platform that bridges the gap between AI tools and real mentorship by combining AI-powered mock interviews, expert consulting, and personalized learning and preparation paths
+- Impact: Empowers users with clarity, confidence, and career readiness through tailored support and accessible professional guidance
+- Team: 2 members over 12 weeks
+- My Role: Lead UX/UI design and visual system development
+- Tools: Figma (end-to-end UI/UX design), Custom AI/LLM Framework (conversational and feedback engines), User Research Frameworks (interview planning and insight synthesis)
+- Technical Implementation:
+  • AI Integration with realistic digital interviewer featuring character-based tone adaptation
+  • Technical Practice through Code Mode interface for algorithmic and coding questions
+  • Expert Access with built-in scheduling and recommendation for 1:1 mentor sessions
+  • Feedback System using dynamic feedback engine and data visualizations
+  • User Research focused on needs of international and early-career tech job seekers
+- Key Features: AI-driven digital interviewer with expressive avatar and adaptive tone, technical interview "Code Mode" for practicing algorithm and system design questions, expert mentoring network and career recommendation engine, interview analytics and detailed feedback dashboards
+- Expanded Skills: AI/ML Interface Design, Product Leadership
+- Professional Domain: Educational Technology & Career Development - building AI-driven educational platforms that enable personalized, scalable career support
+
+• **Floratune – Phygital Nature Connection Device**
+An innovative phygital (physical + digital) product designed to promote harmony between humans and nature through sonification of plant bio-data, enabling intuitive musical interaction with plants in a portable and engaging format.
+- Challenge: Creating an intuitive device that transforms plant bio-responses into adaptive music while maintaining portability and interactivity, bridging the disconnect between urban dwellers and nature
+- Solution: Combined electronic circuit prototyping with TouchDesigner for real-time visual feedback and Ableton Live for music composition, creating immersive installation-based storytelling to promote environmental awareness
+- Impact: Successfully bridges human-nature disconnect through immersive interaction, demonstrating innovative approaches to environmental awareness through technology
+- Team: 4 members over 15 weeks
+- My Role: Research, technical development, visual programming, and exhibition coordination
+- Tools: Arduino (electronic circuits and plant signal capture), TouchDesigner (dynamic visual output and media interactivity), Ableton Live (generative music and audio signal routing), Figma (user flows and control interface), Google Teachable Machine (plant recognition and adaptive response)
+- Technical Implementation:
+  • Hardware Integration using Arduino for assembling electronic circuits and capturing plant signals
+  • Visual Programming with TouchDesigner for dynamic visual output and media interactivity
+  • Music Production through Ableton Live for composing generative music and audio signal routing
+  • Machine Learning via Google Teachable Machine for plant identification and adaptive response
+  • Interface Design using Figma for planning user flows and control interface
+- Key Features: Real-time sonification of plant bio-signals, immersive exhibition space with live plant interaction, machine learning-based plant identification, adaptive musical scales based on plant species
+- Expanded Skills: Phygital Product Design, Electronic Circuit Prototyping, Generative Music & Signal Processing
+- Professional Domain: Phygital Product Design & Environmental Interaction - designing hybrid physical-digital experiences that foster connections with natural systems
+
+• **Anastasia – Interactive Digital Art Book with AR**
+An interactive digital art book inspired by Italo Calvino's Invisible Cities, exploring themes of desire and consumerism through augmented reality animations and AI-generated visual storytelling.
+- Challenge: Seamlessly integrating physical book format with digital AR interactions, capturing the city's contrasting nature through multi-sensory storytelling
+- Solution: Created a hybrid experience blending physical book design with immersive AR interactions across 8 chapters, using AI-generated visuals and custom typography
+- Impact: Demonstrated innovative approaches to digital-literary experiences, showing how AI and AR can enhance narrative expression
+- Team: 6 members over 15 weeks
+- My Role: Concept development, prompt engineering for AI generation, book layout and design, AR interaction creation
+- Tools: Stable Diffusion (visual generation and custom typography), Spark AR (interactive filters), FontSelf (typography creation), Instagram AR Filters (delivery platform)
+- Technical Implementation: 
+  • AI-Generated Visuals using Stable Diffusion for contrasting imagery
+  • Custom Typography created via Stable Diffusion and assembled with FontSelf plugin
+  • AR Interactions designed with Spark AR for interactive filters and animations
+  • Physical Integration through NFC tags linking to Instagram AR pages
+  • Cross-Platform Delivery with unique Instagram-based AR filters for each chapter
+- Key Features: 8 thematic chapters (Connection, Chaos, Exchange, Temptation, Alienation), hybrid physical-digital experience, AI-enhanced narrative, custom typography, mobile-accessible AR interactions
+- Expanded Skills: Digital Narrative & Literary Adaptation, Custom Typography & Type Design, AR Interaction Design & Filter Creation
+
+• **Milano Partecipa – Digital Citizen Engagement Platform**
+A digital engagement platform redesigned for the Municipality of Milan to support inclusive citizen participation in local governance, focusing on improving accessibility, usability, and inclusivity for underrepresented groups through human-centered design and civic technology.
+- Challenge: Address participation gaps and usability issues in the city's existing system, particularly for marginalized or non-native communities like migrants
+- Solution: Conducted in-depth user research and service mapping, improved information architecture and content flow, leveraged open-source Decidim platform to enhance transparency, accessibility, and public trust, supporting both aggregative and deliberative models of participation (hybrid democracy)
+- Impact: Empowered Milanese residents through a more inclusive, community-oriented civic platform that facilitates meaningful engagement in local decision-making
+- Team: 5 members over 16 weeks
+- My Role: Problem analysis, service mapping, information architecture, product testing
+- Tools: Figma (interface and architecture design), Protopie (high-fidelity interaction prototypes), Maze (remote usability testing with multilingual and multicultural participants), Decidim (open-source civic platform integration and configuration)
+- Technical Implementation:
+  • Collaborative Design using Figma for user flows, wireframes, and system architecture
+  • Workflow Prototyping with Protopie to simulate complex civic engagement scenarios
+  • User Testing via Maze to evaluate accessibility and usability with diverse user groups
+  • Open-Source Stack with custom integration and configuration of Decidim civic engagement platform
+  • Democratic Models designed for hybrid democracy combining deliberative and aggregative participation methods
+- Key Features: Decidim open-source integration, mixed-mode participation (online + in-person), geo-located notifications for local initiatives, community-building tools to strengthen citizen engagement
+- Expanded Skills: Civic Tech & Digital Democracy, Heuristic Evaluation & Benchmarking, Service Design in Public Sector
+- Professional Domain: Civic Technology & Digital Democracy - inclusive digital participation, public service accessibility, and participatory design in governance systems
+
+---
+
+design approach:
+My design approach centers on human-centered, research-driven design that prioritizes:
+• Deep user research and behavioral insights
+• Service design and systems thinking
+• Iterative testing and evidence-based design decisions
+• Collaborative and inclusive design processes
+• Accessibility and universal design principles
+• Strategic problem-solving through design
+---
+
+design process:
+I follow a structured design process based on the Double Diamond model:
+1. Discovery & Research
+Understand user needs and business goals through research and analysis.
+2. Ideation & Conceptualization
+Brainstorm and explore potential design solutions.
+3. Design & Prototyping
+Create wireframes, models, and interactive prototypes.
+4. Testing & Iteration
+Validate designs with users and stakeholders; refine based on feedback.
+5. Implementation & Collaboration
+Work closely with development teams to bring designs to life.
+6. Evaluation & Optimization
+Measure outcomes and continuously improve the solution.
+
+---
+
+workflow tools:
+1. Research Phase
+User interviews, ethnographic research, and behavioral analysis
+2. Ideation Phase
+User journey mapping, service blueprinting, and concept development
+3. Design Phase
+Experience design and interaction prototyping in Figma; advanced user flow simulation using Protopie
+4. Testing Phase
+Usability testing and experience validation via Maze; collaborative design reviews and iteration
+5. Delivery Phase
+Experience specification and cross-functional collaboration using Figma
+6. Special Projects
+• TouchDesigner – Visual programming for interactive media
+• Arduino – Hardware integration and physical computing
+• Unity – VR/AR development for immersive experiences
+• Stable Diffusion – AI-generated creative design
+• Dify – AI agent development and conversational interface design
+
+---
+
+contact:
+Here's my contact information:
+• Email: flyskytoo@outlook.com
+• Portfolio: meichai.net
+• Phone: (+39)379 2076 803
+• LinkedIn: www.linkedin.com/in/meichai
+• Location: Milan, Italy
+
+---
+
+skills:
+I specialize in:
+• User Experience Research and Design Strategy
+• Interaction Design and User Journey Mapping
+• Usability Testing and Design Validation
+• Service Design and System Thinking
+• Accessibility and Inclusive Design
+• Cross-platform Experience Design (Web, Mobile, AR/VR)
+---
+
+core tools:
+Core Tools List (based on user experience):
+• Figma – Primary tool for UI/UX design, prototyping, and real-time collaboration
+• Protopie – Advanced interaction prototyping with sensor and hardware integration
+• Maze – User testing, usability research, and design validation
+• TouchDesigner – Visual programming for interactive media and installation design
+• Arduino – Hardware prototyping and physical computing for interactive projects
+• Stable Diffusion – AI-powered generative design and creative image synthesis
+• Dify – AI agent development and conversational interface design
+• Unity – VR/AR development and immersive experience design
+• Framer – Visual website design and development (used in actual production)
+
+---
+
+experience:
+Liba Space	California, United States
+Lead Interaction Designer (Remote)	Nov 2024 to Present
+As the lead designer on the project, I was responsible for overseeing the entire design process CrackInterview.ai and Jobnova.ai,—from research to final delivery. I led the interaction and UX strategy while collaborating with a design intern, who supported visual design tasks such as UI polish, posters, and marketing assets.
+• Led interaction and user flow design for core features including job matching, AI mock interviews, and result feedback.
+• Conducted user research and competitive analysis to identify pain points and inform feature prioritization.
+• Designed conversational flows for AI interviewers, ensuring natural, role-specific dialogue styles.
+• Conducted usability testing and iterated designs based on real user behavior.
+• Helped build AI-driven job matching and interview simulation features that connected users with relevant roles and actionable feedback.
+
+CRRC Qingdao Sifang Rolling Stock Research Institute Co., Ltd	Qingdao, China
+Interaction Designer Internship	Aug 2024 - Sep 2024 · 2 months
+Optimized user research processes for the subway maintenance system app and backend, conducting interviews and observations to gain insights into user pain points and challenges.
+• Improved maintenance workflow by streamlining processes and task allocation, driving efficiency and effectiveness.
+• Enhanced system's visual design to reduce user stress and enhance satisfaction, thus improving the overall user experience in alignment with user-centered design principles.
+
+Beijing Smart Walnut Education	Beijing, China
+User Research Specialist	Dec 2019 - Jun 2022 · 2.5 years
+Led user research projects and conducted usability testing for the online education platform, developing user personas, user journeys, and product testing strategies to inform design decisions.
+• Developed product optimization recommendations from analysis of user behavior, generating tangible business results in terms of product usage and engagement.
+• Enhanced user data collection methods along the customer journey, resulting in more personalized user experiences and informed product evolution.
+• Codified and disseminated user research findings that promoted a user-centric culture, aligning products with user needs through better cross-team collaboration.
+• Conducted extensive user research for Walnut Programming, enabling the optimization of 50+ learning paths for children that significantly improved study effectiveness and decreased errors.
+• Analyzed purchasing behavior and launched new product features tailored to key criteria, driving a 30% increase in sales by understanding parental priorities and requirements.
+
+Sohu (Leading Chinese Technology Company)	Beijing, China
+Interaction Designer	Nov 2015 - Dec 2019 · 4 years
+Responsible for the interaction design of Sohu's social media platform (Huyou) with a key focus on feed streams and instant messaging modules.
+• Designed interaction elements for Sohu's social media platform (Huyou), focusing on feed streams and instant messaging modules, which enhanced user engagement
+• Independently designed Sohu Moke from scratch, which reached 3,000+ daily active users after launch.
+• Successfully updated Sohu's user account system and restructured the user database enabling the merge and consolidation by real-name accounts.
+• Participated in defining, maintaining, and executing the guiding principles and standards for interaction design.
+
+Beijing Dola Technology	Beijing, China
+Chief Designer	Jun 2015 - Sep 2015 · 3 months
+Responsible for the entire design flow from product requirements to product demo and implementation, as well as brand visual identity and marketing materials.
+• Led the design flow from product requirements to product demo and implementation using Figma and Touchdesigner, enhancing product usability and brand consistency
+• Supported marketing and operations, ensuring the successful launch of a digital solution for small supermarkets, which improved operational efficiency and customer engagement
+
+Eims	Shenzhen, China
+UI Designer	Oct 2013 - Jun 2015 · 2 years
+Responsible for UI design for 20+ client projects (e.g., cloud computing, brand website, application, e-store, WeChat mini-program) and coordinated product development and execution.
+• Designed UI for 20+ client projects, including cloud computing and e-commerce platforms, using Figma and Protopie. Coordinated product development and execution to enhance user experience
+• Conducted user studies and analyzed design trends to inform UI decisions, resulting in improved user engagement and satisfaction
+
+---
+
+education:
+My educational background:
+• Master's in Digital and Interaction Design - Politecnico di Milano
+• Focus on Human-Computer Interaction and User Experience
+• Research in AI-assisted design tools and methodologies
+• Thesis on "Advances in AI-Powered sentiment analysis in UX design"
+
+---
+
+philosophy:
+My design philosophy:
+• Design should solve real human problems
+• Technology should enhance, not complicate human experiences
+• Inclusive design benefits everyone
+• Collaboration leads to better solutions
+• Continuous learning and adaptation are essential
+• Empathy is the foundation of good design

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mei Chatbot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="chatbot-config.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            background: transparent;
+            overflow: hidden;
+        }
+
+        /* Chatbot styles */
+        .chatbot-container {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chatbot-header {
+            padding: 16px 24px;
+            background: white;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            justify-content: space-between;
+            align-items: center;
+            display: flex;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .chatbot-title {
+            margin: 0;
+            color: #17181A;
+            font-size: 16px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            width: 26px;
+            height: 26px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: background 0.3s ease;
+            font-size: 22px;
+            color: #666;
+        }
+
+        .close-btn:hover {
+            background: #F45D22;
+            color: white;
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 32px 24px;
+            background: white;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 10px;
+            display: flex;
+            overflow-y: auto;
+        }
+
+        .chatbot-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chatbot-messages::-webkit-scrollbar-track {
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .chatbot-messages::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 10px;
+        }
+
+        .chatbot-messages::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+
+        .message {
+            align-self: stretch;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 6px;
+            display: flex;
+            margin-bottom: 12px;
+        }
+
+        .message:first-child {
+            margin-top: 0;
+        }
+
+        .message:last-child {
+            margin-bottom: 0;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message.user .message-sender {
+            text-align: right;
+            align-self: flex-end;
+        }
+
+        .message.user .message-content {
+            align-self: flex-end;
+            background: #17181A;
+            color: white;
+            text-align: left;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 32px;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            display: flex;
+            flex-shrink: 0;
+        }
+
+        .message.bot .message-avatar {
+            background: #17181A;
+        }
+
+        .message.user .message-avatar {
+            background: #F45D22;
+        }
+
+        .message-avatar-text {
+            color: white;
+            font-size: 14px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 600;
+        }
+
+        .message-content-wrapper {
+            flex: 1;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 4px;
+            display: flex;
+        }
+
+        .message.user .message-content-wrapper {
+            align-items: flex-end;
+        }
+
+        .message-sender {
+            align-self: flex-start;
+            color: #363636;
+            font-size: 12px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 400;
+        }
+
+        .message-content {
+            align-self: flex-start;
+            padding: 12px 16px;
+            background: #F2F3F7;
+            border-radius: 8px;
+            justify-content: flex-start;
+            align-items: flex-start;
+            display: flex;
+            color: #17181A;
+            font-size: 12px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 400;
+            line-height: 1.5;
+            white-space: pre-line;
+            max-width: 100%;
+            text-align: left;
+        }
+
+        .quick-actions {
+            align-self: stretch;
+            padding: 6px 24px;
+            border-top: 1px #D3D3D3 solid;
+            background: white;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 12px;
+            display: flex;
+        }
+
+        .quick-actions-row {
+            width: 100%;
+            height: 100%;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 8px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .quick-action {
+            padding: 6px 16px;
+            background: #F3F5F6;
+            border-radius: 10px;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 10px;
+            display: flex;
+            cursor: pointer;
+            border: none;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .quick-action-text {
+            opacity: 0.90;
+            color: #444444;
+            font-size: 12px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 400;
+        }
+
+        .quick-action:hover {
+            background: #F45D22;
+        }
+
+        .quick-action:hover .quick-action-text {
+            color: white;
+        }
+
+        .chatbot-input {
+            align-self: stretch;
+            padding: 6px 24px 14px 24px;
+            background: white;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 12px;
+            display: flex;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            height: 44px;
+            padding: 0 12px 0 24px;
+            border-radius: 22px;
+            outline: 1px #C1C1C1 solid;
+            outline-offset: -1px;
+            justify-content: space-between;
+            align-items: center;
+            display: flex;
+            transition: outline-color 0.3s ease;
+        }
+
+        .input-wrapper:focus-within {
+            outline-color: #F45D22;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            color: #17181A;
+            font-size: 14px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 400;
+            outline: none;
+        }
+
+        .chatbot-input input::placeholder {
+            color: #D8D8D8;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .send-btn {
+            width: 32px;
+            height: 32px;
+            background: #CCCCCC;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            padding: 0;
+            font-size: 16px;
+            color: white;
+        }
+
+        .send-btn:hover {
+            background: #F45D22;
+        }
+
+        /* Typing indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        /* Markdown样式 */
+        .message-content h1 {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 0.5em 0;
+            color: #17181A;
+        }
+
+        .message-content h2 {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin: 0.4em 0;
+            color: #17181A;
+        }
+
+        .message-content h3 {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin: 0.3em 0;
+            color: #17181A;
+        }
+
+        .message-content strong {
+            font-weight: bold;
+        }
+
+        .message-content em {
+            font-style: italic;
+        }
+
+        .message-content code {
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Chatbot Container -->
+    <div class="chatbot-container">
+        <div class="chatbot-header">
+            <h3 class="chatbot-title">Chat with Mei</h3>
+            <button class="close-btn" id="close-chatbot">×</button>
+        </div>
+        <div class="chatbot-messages" id="chatbot-messages">
+            <div class="message bot">
+                <div class="message-avatar">
+                    <span class="message-avatar-text">M</span>
+                </div>
+                <div class="message-content-wrapper">
+                    <div class="message-sender">Mei</div>
+                    <div class="message-content">Hi there! I'm Mei, a UX/UI designer. Feel free to ask me about my work, projects, design skills, or professional experience!</div>
+                </div>
+            </div>
+        </div>
+        <div class="quick-actions">
+            <div class="quick-actions-row">
+                <button class="quick-action" onclick="sendQuickMessage('Tell me about your projects')">
+                    <span class="quick-action-text">Projects</span>
+                </button>
+                <button class="quick-action" onclick="sendQuickMessage('What is your design approach?')">
+                    <span class="quick-action-text">Design Approach</span>
+                </button>
+                <button class="quick-action" onclick="sendQuickMessage('How can I contact you?')">
+                    <span class="quick-action-text">Contact</span>
+                </button>
+            </div>
+        </div>
+        <div class="chatbot-input">
+            <div class="input-wrapper">
+                <input type="text" id="message-input" placeholder="Ask me about my work..." />
+                <button class="send-btn" id="send-btn">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chatbot functionality
+        const closeChatbot = document.getElementById('close-chatbot');
+        const messageInput = document.getElementById('message-input');
+        const sendBtn = document.getElementById('send-btn');
+        const messagesContainer = document.getElementById('chatbot-messages');
+
+        // 知识库变量 - 将从外部文件加载
+        let knowledgeBase = {};
+        
+        // 加载知识库
+        async function loadKnowledgeBase() {
+            try {
+                const response = await fetch('knowledge-base.txt');
+                const text = await response.text();
+                parseKnowledgeBase(text);
+                console.log('知识库加载成功');
+            } catch (error) {
+                console.error('知识库加载失败:', error);
+            }
+        }
+        
+        // 解析知识库文本
+        function parseKnowledgeBase(text) {
+            const sections = text.split('---').filter(section => section.trim());
+            sections.forEach(section => {
+                const lines = section.trim().split('\n');
+                const key = lines[0].replace(':', '').trim().toLowerCase();
+                const content = lines.slice(1).join('\n').trim();
+                knowledgeBase[key] = content;
+            });
+        }
+        
+        // 使用外部配置文件 chatbot-config.js
+        console.log('使用外部配置文件');
+        
+        // 获取完整知识库内容
+        function getKnowledgeBaseContent() {
+            // 将知识库转换为文本格式
+            let knowledgeText = "Knowledge Base:\n";
+            for (const [key, content] of Object.entries(knowledgeBase)) {
+                knowledgeText += `\n${key.toUpperCase()}:\n${content}\n`;
+            }
+            
+            return knowledgeText;
+        }
+        
+        // 智能回复系统 - 仅使用 ChatGPT API 和 chatbot-config.js 配置
+        async function getSmartResponse(message) {
+            // 检查 ChatGPT API 配置
+            if (window.CHATBOT_CONFIG.ENABLE_CHATGPT && window.CHATBOT_CONFIG.OPENAI_API_KEY && window.CHATBOT_CONFIG.OPENAI_API_KEY !== 'your-openai-api-key-here') {
+                try {
+                    const response = await callChatGPT(message);
+                    if (response) {
+                        return response;
+                    }
+                } catch (error) {
+                    console.error('ChatGPT API调用失败:', error);
+                    return 'Sorry, I\'m having trouble connecting right now. Please try again later or contact Mei directly at flyskytoo@outlook.com.';
+                }
+            }
+            
+            // 如果 ChatGPT API 未配置或禁用，返回提示信息
+            return 'Hi! I\'m Mei\'s AI assistant, but I need to be properly configured to chat with you. Please contact Mei directly at flyskytoo@outlook.com for now.';
+        }
+        
+        // 调用ChatGPT API
+        async function callChatGPT(message) {
+            try {
+                console.log('正在调用ChatGPT API...');
+                
+                // 获取知识基础内容并构建系统提示
+                const knowledgeBaseContent = getKnowledgeBaseContent();
+                const enhancedSystemPrompt = `${window.CHATBOT_CONFIG.SYSTEM_PROMPT}
+
+Reference information (DO NOT quote directly, rephrase in your own words):
+${knowledgeBaseContent}`;
+                
+                const response = await fetch(window.CHATBOT_CONFIG.OPENAI_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${window.CHATBOT_CONFIG.OPENAI_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: window.CHATBOT_CONFIG.MODEL,
+                        messages: [
+                            {
+                                role: 'system',
+                                content: enhancedSystemPrompt
+                            },
+                            {
+                                role: 'user',
+                                content: message
+                            }
+                        ],
+                        max_tokens: window.CHATBOT_CONFIG.MAX_TOKENS,
+                        temperature: window.CHATBOT_CONFIG.TEMPERATURE
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.error?.message || 'Unknown error'}`);
+                }
+                
+                const data = await response.json();
+                console.log('ChatGPT API调用成功');
+                return data.choices[0].message.content.trim();
+            } catch (error) {
+                console.error('ChatGPT API调用错误:', error);
+                return null;
+            }
+        }
+
+        // Close chatbot - 通知父页面关闭
+        closeChatbot.addEventListener('click', () => {
+            window.parent.postMessage({ type: 'closeChatbot' }, '*');
+        });
+
+        // Send message function
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (message) {
+                // Add user message
+                addMessage(message, 'user');
+                messageInput.value = '';
+                
+                // Show typing indicator
+                showTypingIndicator();
+                
+                // 添加最小延迟时间，让用户感受到思考过程
+                const minDelay = 1500; // 最少1.5秒的思考时间
+                const startTime = Date.now();
+                
+                // Get smart response
+                try {
+                    const response = await getSmartResponse(message);
+                    
+                    // 计算已经过去的时间
+                    const elapsedTime = Date.now() - startTime;
+                    const remainingDelay = Math.max(0, minDelay - elapsedTime);
+                    
+                    // 如果响应太快，添加额外延迟
+                    if (remainingDelay > 0) {
+                        await new Promise(resolve => setTimeout(resolve, remainingDelay));
+                    }
+                    
+                    hideTypingIndicator();
+                    addMessage(response, 'bot');
+                } catch (error) {
+                    console.error('获取回复失败:', error);
+                    
+                    // 即使出错也要保持最小延迟
+                    const elapsedTime = Date.now() - startTime;
+                    const remainingDelay = Math.max(0, minDelay - elapsedTime);
+                    if (remainingDelay > 0) {
+                        await new Promise(resolve => setTimeout(resolve, remainingDelay));
+                    }
+                    
+                    hideTypingIndicator();
+                    addMessage('抱歉，我现在无法回复。请稍后再试。', 'bot');
+                }
+            }
+        }
+
+        async function sendQuickMessage(message) {
+            // Add user message
+            addMessage(message, 'user');
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // 添加最小延迟时间，让用户感受到思考过程
+            const minDelay = 1500; // 最少1.5秒的思考时间
+            const startTime = Date.now();
+            
+            // Get smart response
+            try {
+                const response = await getSmartResponse(message);
+                
+                // 计算已经过去的时间
+                const elapsedTime = Date.now() - startTime;
+                const remainingDelay = Math.max(0, minDelay - elapsedTime);
+                
+                // 如果响应太快，添加额外延迟
+                if (remainingDelay > 0) {
+                    await new Promise(resolve => setTimeout(resolve, remainingDelay));
+                }
+                
+                hideTypingIndicator();
+                addMessage(response, 'bot');
+            } catch (error) {
+                console.error('获取回复失败:', error);
+                
+                // 即使出错也要保持最小延迟
+                const elapsedTime = Date.now() - startTime;
+                const remainingDelay = Math.max(0, minDelay - elapsedTime);
+                if (remainingDelay > 0) {
+                    await new Promise(resolve => setTimeout(resolve, remainingDelay));
+                }
+                
+                hideTypingIndicator();
+                addMessage('抱歉，我现在无法回复。请稍后再试。', 'bot');
+            }
+        }
+        
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot typing-indicator';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="message-avatar">
+                    <span class="message-avatar-text">M</span>
+                </div>
+                <div class="message-content-wrapper">
+                    <div class="message-sender">Mei</div>
+                    <div class="message-content">
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // 简单的文本解析函数 - 只处理基本格式，保持文本样式
+        function parseMarkdown(text) {
+            // 只处理换行符，保持其他内容为纯文本
+            text = text.replace(/\n/g, '<br>');
+            return text;
+        }
+
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            const avatarText = document.createElement('span');
+            avatarText.className = 'message-avatar-text';
+            avatarText.textContent = sender === 'user' ? 'M' : 'M';
+            avatar.appendChild(avatarText);
+            
+            const contentWrapper = document.createElement('div');
+            contentWrapper.className = 'message-content-wrapper';
+            
+            const senderDiv = document.createElement('div');
+            senderDiv.className = 'message-sender';
+            senderDiv.textContent = sender === 'user' ? 'Me' : 'Mei';
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            
+            // 对于机器人消息，解析markdown格式；用户消息保持纯文本
+            if (sender === 'bot') {
+                contentDiv.innerHTML = parseMarkdown(text);
+            } else {
+                contentDiv.textContent = text;
+            }
+            
+            contentWrapper.appendChild(senderDiv);
+            contentWrapper.appendChild(contentDiv);
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(contentWrapper);
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Send button click
+        sendBtn.addEventListener('click', sendMessage);
+
+        // Enter key to send
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            loadKnowledgeBase();
+        });
+    </script>
+        
+</body>
+</html>
