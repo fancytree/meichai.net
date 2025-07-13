@@ -13,22 +13,33 @@ function getApiKeyFromEnv() {
         return window.ENV.OPENAI_API_KEY;
     }
     
-    // 本地开发环境：尝试从.env文件获取（通过env-loader.js加载）
-    // 注意：这需要env-loader.js正确加载.env文件到window.ENV中
-    // 默认值（占位符）
-    return 'your-openai-api-key-here';
+    // 本地开发环境：请在此处设置您的API密钥
+    // 注意：在生产环境中，这个值会被Vercel环境变量覆盖
+    // 请将下面的占位符替换为您的实际OpenAI API密钥
+    return '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';
 }
 
 // 从API端点获取配置的函数（用于生产环境）
 async function getConfigFromApi() {
     try {
-        const response = await fetch('/api/config');
+        // 首先尝试从API端点获取配置
+        let response = await fetch('/api/config');
+        
+        // 如果API端点返回404或其他错误，尝试从静态JSON文件获取
+        if (!response.ok) {
+            console.log('API端点不可用，尝试从静态配置文件获取');
+            response = await fetch('/api/config.json');
+        }
+        
         if (response.ok) {
             const config = await response.json();
+            console.log('✅ 成功从配置源获取配置');
             return config;
+        } else {
+            console.log('❌ 配置文件也无法访问');
         }
     } catch (error) {
-        console.log('无法从API获取配置，使用本地配置');
+        console.log('❌ 无法从API获取配置，使用本地配置:', error.message);
     }
     return null;
 }
@@ -45,30 +56,19 @@ async function initializeChatbotConfig() {
         CHATBOT_CONFIG.MAX_TOKENS = apiConfig.maxTokens;
         CHATBOT_CONFIG.TEMPERATURE = apiConfig.temperature;
         CHATBOT_CONFIG.OPENAI_API_URL = apiConfig.apiUrl;
-        console.log('聊天机器人配置已更新，API密钥来源: Vercel环境变量');
+        console.log('✅ 聊天机器人配置已更新，API密钥来源: Vercel环境变量');
         return CHATBOT_CONFIG;
     }
     
-    // 如果API不可用，等待本地环境变量加载完成
-    const checkEnvLoaded = () => {
-        return new Promise((resolve) => {
-            const check = () => {
-                if (typeof window !== 'undefined' && window.ENV) {
-                    resolve();
-                } else {
-                    setTimeout(check, 100);
-                }
-            };
-            check();
-        });
-    };
-    
-    await checkEnvLoaded();
-    
-    // 重新获取API密钥
+    // 如果API不可用，使用本地配置
     CHATBOT_CONFIG.OPENAI_API_KEY = getApiKeyFromEnv();
-    console.log('聊天机器人配置已更新，API密钥来源:', 
-        window.ENV && window.ENV.OPENAI_API_KEY ? '.env文件' : '默认配置');
+    
+    if (CHATBOT_CONFIG.OPENAI_API_KEY && CHATBOT_CONFIG.OPENAI_API_KEY.startsWith('sk-')) {
+        console.log('✅ 聊天机器人配置已更新，API密钥来源: 本地配置');
+    } else {
+        console.log('❌ 警告：API密钥未正确配置，当前值:', CHATBOT_CONFIG.OPENAI_API_KEY);
+    }
+    
     return CHATBOT_CONFIG;
 }
 
@@ -125,6 +125,13 @@ Examples:
 // 将配置暴露到全局作用域
 if (typeof window !== 'undefined') {
     window.CHATBOT_CONFIG = CHATBOT_CONFIG;
+    
+    // 自动初始化配置（在浏览器环境中）
+    initializeChatbotConfig().then(() => {
+        console.log('聊天机器人配置初始化完成');
+    }).catch(error => {
+        console.error('聊天机器人配置初始化失败:', error);
+    });
 }
 
 // 导出配置（如果在模块环境中使用）

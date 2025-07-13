@@ -521,8 +521,23 @@
             }
         }
         
-        // 执行配置初始化
-        initializeConfig();
+        // 等待DOM和配置完全加载后再初始化
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 等待更长时间确保chatbot-config.js的自动初始化完成
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await initializeConfig();
+            
+            // 验证配置是否正确加载
+            console.log('=== 聊天机器人配置验证 ===');
+            console.log('CHATBOT_CONFIG存在:', !!window.CHATBOT_CONFIG);
+            if (window.CHATBOT_CONFIG) {
+                console.log('API密钥状态:', window.CHATBOT_CONFIG.OPENAI_API_KEY ? 
+                    (window.CHATBOT_CONFIG.OPENAI_API_KEY.startsWith('sk-') ? '✅ 有效' : '❌ 无效格式') : 
+                    '❌ 未设置');
+                console.log('ChatGPT启用状态:', window.CHATBOT_CONFIG.ENABLE_CHATGPT);
+            }
+            console.log('=== 配置验证完成 ===');
+        });
         
         // 获取完整知识库内容
         function getKnowledgeBaseContent() {

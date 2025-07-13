@@ -1,0 +1,8 @@
+{
+  "isConfigured": true,
+  "apiKey": "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",
+  "model": "gpt-4o-mini",
+  "maxTokens": 500,
+  "temperature": 0.6,
+  "apiUrl": "https://api.openai.com/v1/chat/completions"
+}
