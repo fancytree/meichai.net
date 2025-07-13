@@ -25,21 +25,15 @@ function getApiKeyFromEnv() {
 // 从API端点获取配置的函数（用于生产环境）
 async function getConfigFromApi() {
     try {
-        // 首先尝试从API端点获取配置
-        let response = await fetch('/api/config');
-        
-        // 如果API端点返回404或其他错误，尝试从静态JSON文件获取
-        if (!response.ok) {
-            console.log('API端点不可用，尝试从静态配置文件获取');
-            response = await fetch('/api/config.json');
-        }
+        // 尝试从API端点获取配置
+        const response = await fetch('/api/config');
         
         if (response.ok) {
             const config = await response.json();
-            console.log('✅ 成功从配置源获取配置');
+            console.log('✅ 成功从API端点获取配置');
             return config;
         } else {
-            console.log('❌ 配置文件也无法访问');
+            console.log('❌ API端点不可用，状态码:', response.status);
         }
     } catch (error) {
         console.log('❌ 无法从API获取配置，使用本地配置:', error.message);
