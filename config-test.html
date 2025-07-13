@@ -86,7 +86,7 @@
             <p><strong>For Local Development:</strong></p>
             <ol>
                 <li>Open <code>chatbot-config.js</code></li>
-                <li>Replace <code>sk-your-actual-openai-api-key-here</code> with your real API key</li>
+                <li>Add your OpenAI API key to the .env file in the project root</li>
                 <li>Save the file</li>
             </ol>
         </div>
@@ -126,7 +126,7 @@
                     addResult('✅ chatbot-config.js loaded successfully', 'success');
                     
                     const apiKey = window.CHATBOT_CONFIG.OPENAI_API_KEY;
-                    if (apiKey && apiKey !== 'your-openai-api-key-here' && apiKey !== 'sk-your-actual-openai-api-key-here' && apiKey.startsWith('sk-')) {
+                    if (apiKey && apiKey !== 'your-openai-api-key-here' && apiKey.startsWith('sk-')) {
                         addResult('✅ Local API key is configured and valid', 'success');
                     } else {
                         addResult('❌ Local API key is not configured or invalid', 'error');

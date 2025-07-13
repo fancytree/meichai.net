@@ -24,7 +24,7 @@ export default function handler(req, res) {
     const openaiApiKey = process.env.OPENAI_API_KEY;
     
     // Check if API key is configured
-    const isConfigured = openaiApiKey && openaiApiKey !== 'your-openai-api-key-here' && openaiApiKey !== 'your-actual-openai-api-key-here';
+    const isConfigured = openaiApiKey && openaiApiKey !== 'your-openai-api-key-here';
     
     // Return configuration (without exposing the actual API key)
     res.status(200).json({

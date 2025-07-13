@@ -11,7 +11,7 @@
 1. 确保项目根目录下有 `.env` 文件
 2. 在 `.env` 文件中设置您的 API 密钥：
    ```
-   OPENAI_API_KEY=sk-your-actual-openai-api-key-here
+   OPENAI_API_KEY=your-openai-api-key-here
    ```
 3. 保存文件并刷新浏览器
 

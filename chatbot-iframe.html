@@ -512,7 +512,6 @@
             if (!apiConfigLoaded) {
                 if (window.CHATBOT_CONFIG.OPENAI_API_KEY && 
                     window.CHATBOT_CONFIG.OPENAI_API_KEY !== 'your-openai-api-key-here' &&
-                    window.CHATBOT_CONFIG.OPENAI_API_KEY !== 'sk-your-actual-openai-api-key-here' &&
                     window.CHATBOT_CONFIG.OPENAI_API_KEY.startsWith('sk-')) {
                     console.log('✅ 使用本地配置的API key');
                 } else {
@@ -542,7 +541,6 @@
             if (window.CHATBOT_CONFIG.ENABLE_CHATGPT && 
                 window.CHATBOT_CONFIG.OPENAI_API_KEY && 
                 window.CHATBOT_CONFIG.OPENAI_API_KEY !== 'your-openai-api-key-here' &&
-                window.CHATBOT_CONFIG.OPENAI_API_KEY !== 'sk-your-actual-openai-api-key-here' &&
                 window.CHATBOT_CONFIG.OPENAI_API_KEY.startsWith('sk-')) {
                 try {
                     const response = await callChatGPT(message);
@@ -556,7 +554,7 @@
             }
             
             // 如果 ChatGPT API 未配置或禁用，返回配置指导信息
-            return 'Hi! I\'m Mei\'s AI assistant. I need to be properly configured to chat with you.\n\n📋 **Configuration Steps:**\n\n🔹 **For Vercel Production:** Set the `OPENAI_API_KEY` environment variable in your Vercel Dashboard (Settings → Environment Variables), then redeploy.\n\n🔹 **For Local Development:** Replace "sk-your-actual-openai-api-key-here" in the chatbot-config.js file with your real OpenAI API key.\n\n🔗 Get your API key at: https://platform.openai.com/api-keys\n\nFor now, feel free to contact Mei directly at flyskytoo@outlook.com! 😊';
+            return 'Hi! I\'m Mei\'s AI assistant. I need to be properly configured to chat with you.\n\n📋 **Configuration Steps:**\n\n🔹 **For Vercel Production:** Set the `OPENAI_API_KEY` environment variable in your Vercel Dashboard (Settings → Environment Variables), then redeploy.\n\n🔹 **For Local Development:** Add your OpenAI API key to the .env file in the project root.\n\n🔗 Get your API key at: https://platform.openai.com/api-keys\n\nFor now, feel free to contact Mei directly at flyskytoo@outlook.com! 😊';
         }
         
         // 调用ChatGPT API

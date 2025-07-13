@@ -63,9 +63,9 @@ vercel --prod
 1. 在项目根目录创建 `.env` 文件
 2. 添加以下内容：
    ```
-   OPENAI_API_KEY=your-actual-openai-api-key-here
-   ```
-3. 将 `your-actual-openai-api-key-here` 替换为您的真实 API Key
+   OPENAI_API_KEY=your-openai-api-key-here
+
+3. 将 `your-openai-api-key-here` 替换为您的真实 API Key
 
 **注意**: 
 - 本地开发时，由于没有Vercel的serverless functions支持，系统会自动使用 `chatbot-config.js` 中的配置
