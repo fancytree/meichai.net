@@ -14,12 +14,40 @@ function getApiKeyFromEnv() {
     }
     
     // 默认值（占位符）
-    return 'sk-your-actual-openai-api-key-here';
+    return 'your-openai-api-key-here';
+}
+
+// 从API端点获取配置的函数（用于生产环境）
+async function getConfigFromApi() {
+    try {
+        const response = await fetch('/api/config');
+        if (response.ok) {
+            const config = await response.json();
+            return config;
+        }
+    } catch (error) {
+        console.log('无法从API获取配置，使用本地配置');
+    }
+    return null;
 }
 
 // 异步初始化配置的函数
-function initializeChatbotConfig() {
-    // 等待环境变量加载完成
+async function initializeChatbotConfig() {
+    // 首先尝试从API端点获取配置（生产环境）
+    const apiConfig = await getConfigFromApi();
+    
+    if (apiConfig && apiConfig.isConfigured) {
+        // 使用API返回的配置
+        CHATBOT_CONFIG.OPENAI_API_KEY = apiConfig.apiKey;
+        CHATBOT_CONFIG.MODEL = apiConfig.model;
+        CHATBOT_CONFIG.MAX_TOKENS = apiConfig.maxTokens;
+        CHATBOT_CONFIG.TEMPERATURE = apiConfig.temperature;
+        CHATBOT_CONFIG.OPENAI_API_URL = apiConfig.apiUrl;
+        console.log('聊天机器人配置已更新，API密钥来源: Vercel环境变量');
+        return CHATBOT_CONFIG;
+    }
+    
+    // 如果API不可用，等待本地环境变量加载完成
     const checkEnvLoaded = () => {
         return new Promise((resolve) => {
             const check = () => {
@@ -33,13 +61,13 @@ function initializeChatbotConfig() {
         });
     };
     
-    return checkEnvLoaded().then(() => {
-        // 重新获取API密钥
-        CHATBOT_CONFIG.OPENAI_API_KEY = getApiKeyFromEnv();
-        console.log('聊天机器人配置已更新，API密钥来源:', 
-            window.ENV && window.ENV.OPENAI_API_KEY ? '.env文件' : '默认配置');
-        return CHATBOT_CONFIG;
-    });
+    await checkEnvLoaded();
+    
+    // 重新获取API密钥
+    CHATBOT_CONFIG.OPENAI_API_KEY = getApiKeyFromEnv();
+    console.log('聊天机器人配置已更新，API密钥来源:', 
+        window.ENV && window.ENV.OPENAI_API_KEY ? '.env文件' : '默认配置');
+    return CHATBOT_CONFIG;
 }
 
 const CHATBOT_CONFIG = {
