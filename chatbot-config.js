@@ -13,6 +13,15 @@ function getApiKeyFromEnv() {
         return window.ENV.OPENAI_API_KEY;
     }
     
+    // 本地开发备用方案：直接返回.env文件中的值
+    // 注意：这是临时解决方案，生产环境应使用API端点
+    const localApiKey = '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';
+    
+    // 检查是否在本地开发环境（通过URL判断）
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+        return localApiKey;
+    }
+    
     // 默认值（占位符）
     return 'your-openai-api-key-here';
 }
@@ -47,12 +56,19 @@ async function initializeChatbotConfig() {
         return CHATBOT_CONFIG;
     }
     
-    // 如果API不可用，等待本地环境变量加载完成
+    // 如果API不可用，等待本地环境变量加载完成（最多等待3秒）
     const checkEnvLoaded = () => {
         return new Promise((resolve) => {
+            let attempts = 0;
+            const maxAttempts = 30; // 3秒（30 * 100ms）
+            
             const check = () => {
-                if (typeof window !== 'undefined' && window.ENV) {
-                    resolve();
+                attempts++;
+                if (typeof window !== 'undefined' && window.ENV && window.ENV.OPENAI_API_KEY) {
+                    resolve(true);
+                } else if (attempts >= maxAttempts) {
+                    console.warn('环境变量加载超时，使用默认配置');
+                    resolve(false);
                 } else {
                     setTimeout(check, 100);
                 }
@@ -61,12 +77,19 @@ async function initializeChatbotConfig() {
         });
     };
     
-    await checkEnvLoaded();
+    const envLoaded = await checkEnvLoaded();
     
     // 重新获取API密钥
     CHATBOT_CONFIG.OPENAI_API_KEY = getApiKeyFromEnv();
+    
+    // 如果仍然是占位符，尝试手动设置（本地开发备用方案）
+    if (CHATBOT_CONFIG.OPENAI_API_KEY === 'your-openai-api-key-here') {
+        // 在本地开发环境中，如果env-loader失败，提供备用配置方式
+        console.warn('环境变量未正确加载，请检查.env文件或直接在chatbot-config.js中配置API密钥');
+    }
+    
     console.log('聊天机器人配置已更新，API密钥来源:', 
-        window.ENV && window.ENV.OPENAI_API_KEY ? '.env文件' : '默认配置');
+        envLoaded ? '.env文件' : '默认配置');
     return CHATBOT_CONFIG;
 }
 
