@@ -2,9 +2,10 @@
 // 请在这里设置您的 OpenAI API 密钥
 
 const CHATBOT_CONFIG = {
-    // 将 'your-openai-api-key-here' 替换为您的实际 OpenAI API 密钥
+    // OpenAI API 密钥配置
+    // 优先使用环境变量，如果没有则使用默认值
     // 获取API密钥: https://platform.openai.com/api-keys
-    OPENAI_API_KEY: 'your-openai-api-key-here',
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY || 'your-openai-api-key-here',
     
     // OpenAI API 端点
     OPENAI_API_URL: 'https://api.openai.com/v1/chat/completions',
