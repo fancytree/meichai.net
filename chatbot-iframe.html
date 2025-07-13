@@ -7,8 +7,34 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <script src="env-loader.js"></script>
-    <script src="chatbot-config.js"></script>
+    <script>
+        // 确保环境变量在配置文件之前加载
+        async function loadScriptsInOrder() {
+            // 首先加载环境变量
+            await new Promise((resolve, reject) => {
+                const envScript = document.createElement('script');
+                envScript.src = 'env-loader.js';
+                envScript.onload = resolve;
+                envScript.onerror = reject;
+                document.head.appendChild(envScript);
+            });
+            
+            // 等待环境变量加载完成
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            // 然后加载配置文件
+            await new Promise((resolve, reject) => {
+                const configScript = document.createElement('script');
+                configScript.src = 'chatbot-config.js';
+                configScript.onload = resolve;
+                configScript.onerror = reject;
+                document.head.appendChild(configScript);
+            });
+        }
+        
+        // 页面加载时执行
+        loadScriptsInOrder().catch(console.error);
+    </script>
     <style>
         body, html {
             margin: 0;
@@ -521,15 +547,32 @@
             }
         }
         
-        // 等待DOM和配置完全加载后再初始化
+        // 等待DOM和脚本完全加载后再初始化
         document.addEventListener('DOMContentLoaded', async () => {
-            // 等待更长时间确保chatbot-config.js的自动初始化完成
-            await new Promise(resolve => setTimeout(resolve, 500));
+            // 等待脚本加载完成
+            let retries = 0;
+            const maxRetries = 20; // 最多等待10秒
+            
+            while ((!window.CHATBOT_CONFIG || !window.ENV) && retries < maxRetries) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+                retries++;
+                console.log(`等待配置加载... (${retries}/${maxRetries})`);
+            }
+            
+            if (retries >= maxRetries) {
+                console.error('❌ 配置加载超时');
+                return;
+            }
+            
             await initializeConfig();
             
             // 验证配置是否正确加载
             console.log('=== 聊天机器人配置验证 ===');
+            console.log('ENV存在:', !!window.ENV);
             console.log('CHATBOT_CONFIG存在:', !!window.CHATBOT_CONFIG);
+            if (window.ENV) {
+                console.log('环境变量API密钥:', window.ENV.OPENAI_API_KEY ? '✅ 已加载' : '❌ 未找到');
+            }
             if (window.CHATBOT_CONFIG) {
                 console.log('API密钥状态:', window.CHATBOT_CONFIG.OPENAI_API_KEY ? 
                     (window.CHATBOT_CONFIG.OPENAI_API_KEY.startsWith('sk-') ? '✅ 有效' : '❌ 无效格式') : 

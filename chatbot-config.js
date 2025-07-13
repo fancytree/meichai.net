@@ -5,18 +5,21 @@
 function getApiKeyFromEnv() {
     // 在Node.js环境中（如Vercel构建时）
     if (typeof process !== 'undefined' && process.env && process.env.OPENAI_API_KEY) {
+        console.log('✅ 从 Node.js 环境变量获取 API 密钥');
         return process.env.OPENAI_API_KEY;
     }
     
-    // 在浏览器环境中，尝试从全局变量获取（如果有构建工具注入）
+    // 在浏览器环境中，尝试从全局变量获取（通过 env-loader.js 加载）
     if (typeof window !== 'undefined' && window.ENV && window.ENV.OPENAI_API_KEY) {
+        console.log('✅ 从浏览器环境变量获取 API 密钥');
         return window.ENV.OPENAI_API_KEY;
     }
     
-    // 本地开发环境：请在此处设置您的API密钥
+    // 本地开发环境备用：直接返回 .env 文件中的值
     // 注意：在生产环境中，这个值会被Vercel环境变量覆盖
-    // 请将下面的占位符替换为您的实际OpenAI API密钥
-    return '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';
+    const fallbackKey = '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';
+    console.log('⚠️ 使用备用 API 密钥（请确保 .env 文件已正确加载）');
+    return fallbackKey;
 }
 
 // 从API端点获取配置的函数（用于生产环境）
