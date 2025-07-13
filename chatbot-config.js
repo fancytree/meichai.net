@@ -13,12 +13,8 @@ function getApiKeyFromEnv() {
         return window.ENV.OPENAI_API_KEY;
     }
     
-<<<<<<< HEAD
     // 本地开发环境：尝试从.env文件获取（通过env-loader.js加载）
     // 注意：这需要env-loader.js正确加载.env文件到window.ENV中
-    
-=======
->>>>>>> parent of 99c5de2 (Update chatbot-config.js)
     // 默认值（占位符）
     return 'your-openai-api-key-here';
 }
