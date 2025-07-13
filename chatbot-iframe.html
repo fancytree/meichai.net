@@ -538,6 +538,9 @@
                 return;
             }
             
+            // 加载知识库
+            await loadKnowledgeBase();
+            
             // 验证配置是否正确加载
             console.log('=== 聊天机器人配置验证 ===');
             console.log('CHATBOT_CONFIG存在:', !!window.CHATBOT_CONFIG);
@@ -548,6 +551,7 @@
                 console.log('配置状态:', window.CHATBOT_CONFIG.isConfigured ? '✅ 已配置' : '❌ 未配置');
                 console.log('ChatGPT启用状态:', window.CHATBOT_CONFIG.ENABLE_CHATGPT);
             }
+            console.log('知识库加载状态:', Object.keys(knowledgeBase).length > 0 ? '✅ 已加载' : '❌ 未加载');
             console.log('=== 配置验证完成 ===');
         });
         
@@ -582,9 +586,9 @@
             try {
                 console.log('正在调用聊天API...');
                 
-                // 直接使用系统提示，不添加知识库内容
-                // 知识库内容将通过AI的训练数据和上下文理解来处理
-                const enhancedSystemPrompt = window.CHATBOT_CONFIG.SYSTEM_PROMPT;
+                // 将知识库内容添加到系统提示中，确保AI能准确回答
+                const knowledgeContent = getKnowledgeBaseContent();
+                const enhancedSystemPrompt = window.CHATBOT_CONFIG.SYSTEM_PROMPT + "\n\n" + knowledgeContent + "\n\nIMPORTANT: Use EXACT information from the knowledge base above. For contact info, use flyskytoo@outlook.com as the email address.";
                 
                 // 调用本地的 /api/chat 端点
                 const response = await fetch('/api/chat', {
