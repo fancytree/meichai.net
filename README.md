@@ -62,7 +62,17 @@ A personal portfolio website for Mei Chai, UX Designer specializing in human-cen
      - Output Directory: ./
    - Click "Deploy"
 
-3. **Custom Domain (Optional)**
+3. **Configure Environment Variables**
+   - Go to your project dashboard
+   - Navigate to "Settings" > "Environment Variables"
+   - Add the following variable:
+     - Name: `OPENAI_API_KEY`
+     - Value: Your OpenAI API Key (starts with `sk-`)
+     - Environments: Production, Preview, Development
+   - Click "Save"
+   - Redeploy the project
+
+4. **Custom Domain (Optional)**
    - Go to your project dashboard
    - Navigate to "Settings" > "Domains"
    - Add your custom domain (e.g., meichai.net)
@@ -84,8 +94,20 @@ python3 -m http.server 8000
 # Visit http://localhost:8000
 ```
 
-## Chatbot Features
+## Chatbot Configuration
 
+### Environment Variables
+The chatbot requires an OpenAI API key to function. Configure it using:
+
+**For Vercel Deployment:**
+- Set `OPENAI_API_KEY` in Vercel Dashboard > Settings > Environment Variables
+- See `VERCEL_SETUP.md` for detailed instructions
+
+**For Local Development:**
+- Create a `.env` file in the project root
+- Add: `OPENAI_API_KEY=your-actual-api-key-here`
+
+### Features
 - Responds as "Mei Chai" in first person
 - Knowledge base covers:
   - Professional experience

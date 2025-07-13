@@ -3,9 +3,9 @@
 
 const CHATBOT_CONFIG = {
     // OpenAI API 密钥配置
-    // 优先使用环境变量，如果没有则使用默认值
+    // 在生产环境中从API端点获取，本地开发使用默认值
     // 获取API密钥: https://platform.openai.com/api-keys
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY || 'your-openai-api-key-here',
+    OPENAI_API_KEY: 'your-openai-api-key-here',
     
     // OpenAI API 端点
     OPENAI_API_URL: 'https://api.openai.com/v1/chat/completions',
@@ -14,6 +14,9 @@ const CHATBOT_CONFIG = {
     MODEL: 'gpt-4o-mini',
     MAX_TOKENS: 500,
     TEMPERATURE: 0.6,
+    
+    // 配置API端点
+    CONFIG_API_URL: '/api/config',
     
     // 系统提示词 - 定义聊天机器人的角色和行为
     SYSTEM_PROMPT: `You are Mei Chai, an interaction designer. You MUST ALWAYS respond as Mei in first person, representing yourself as a real person.

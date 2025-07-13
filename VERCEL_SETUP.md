@@ -62,6 +62,20 @@ vercel --prod
 
 **注意**: `.env` 文件已被添加到 `.gitignore` 中，不会被提交到代码仓库。
 
+## 技术实现说明
+
+### API 配置方式
+本项目使用 Vercel Serverless Functions 来安全地处理 OpenAI API Key：
+
+1. **配置API端点**: `/api/config.js` - 从环境变量中读取 API Key 并安全地提供给前端
+2. **前端配置加载**: `chatbot-iframe.html` 在初始化时自动从 API 端点获取配置
+3. **本地开发**: 可以直接在 `chatbot-config.js` 中设置 API Key 进行测试
+
+### 安全性
+- API Key 不会直接暴露在前端代码中
+- 通过服务器端 API 安全地传递配置信息
+- 支持 CORS 以允许跨域访问
+
 ## 故障排除
 
 ### 常见问题
@@ -69,15 +83,23 @@ vercel --prod
    - 检查环境变量名称是否正确：`OPENAI_API_KEY`
    - 确认 API Key 格式正确（以 `sk-` 开头）
    - 重新部署项目
+   - 检查 `/api/config` 端点是否正常工作
 
 2. **API 调用失败**
    - 检查 OpenAI 账户余额
    - 确认 API Key 有效且未过期
    - 检查 API Key 权限设置
+   - 查看浏览器开发者工具的网络请求
 
 3. **环境变量未生效**
    - 确保在所有环境（Production, Preview, Development）中都设置了变量
    - 重新部署项目
    - 清除浏览器缓存
+   - 访问 `https://your-domain.com/api/config` 检查配置API
 
-如果问题仍然存在，请检查 Vercel 的部署日志获取更多信息。
+4. **配置API无法访问**
+   - 确认 `api/config.js` 文件已正确部署
+   - 检查 Vercel Functions 日志
+   - 确认域名和路径正确
+
+如果问题仍然存在，请检查 Vercel 的部署日志和 Functions 日志获取更多信息。

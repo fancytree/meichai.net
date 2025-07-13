@@ -464,6 +464,32 @@
         // 使用外部配置文件 chatbot-config.js
         console.log('使用外部配置文件');
         
+        // 从API获取配置信息
+        async function loadConfig() {
+            try {
+                const response = await fetch(window.CHATBOT_CONFIG.CONFIG_API_URL);
+                if (response.ok) {
+                    const config = await response.json();
+                    if (config.isConfigured && config.apiKey) {
+                        // 更新配置
+                        window.CHATBOT_CONFIG.OPENAI_API_KEY = config.apiKey;
+                        window.CHATBOT_CONFIG.MODEL = config.model;
+                        window.CHATBOT_CONFIG.MAX_TOKENS = config.maxTokens;
+                        window.CHATBOT_CONFIG.TEMPERATURE = config.temperature;
+                        window.CHATBOT_CONFIG.OPENAI_API_URL = config.apiUrl;
+                        console.log('配置已从API更新');
+                    }
+                } else {
+                    console.log('无法从API获取配置，使用默认配置');
+                }
+            } catch (error) {
+                console.log('配置API调用失败，使用默认配置:', error);
+            }
+        }
+        
+        // 初始化时加载配置
+        loadConfig();
+        
         // 获取完整知识库内容
         function getKnowledgeBaseContent() {
             // 将知识库转换为文本格式
