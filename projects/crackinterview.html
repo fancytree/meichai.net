@@ -525,7 +525,7 @@
         }
         
         .conversation-design-image {
-            max-width: 100%;
+            max-width: 72%;
             height: auto;
             border-radius: 8px;
         }
@@ -641,6 +641,37 @@
         
         .chatflow-image {
             width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        
+        /* Wireframe 样式 */
+        .wireframe {
+            margin-top: 40px;
+        }
+        
+        .wireframe-title {
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: #171616;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        
+        .wireframe-content {
+            width: 100%;
+        }
+        
+        .wireframe-image-container {
+            width: 100%;
+            text-align: center;
+            background-color: #F7F8FA;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .wireframe-image {
+            max-width: 100%;
             height: auto;
             border-radius: 8px;
         }
@@ -1024,11 +1055,12 @@
           
           /* 标题样式 */
             .conversation-design-title {
-                font-size: 1.125rem;
-                font-weight: 500;
+                font-size: 2rem;
+                font-weight: 300;
                 color: #171616;
                 margin-bottom: 1rem;
                 margin-top: 0;
+                text-align: left;
             }
           
           /* 上部分：文字描述 */
@@ -2001,6 +2033,17 @@ If user responds → proceed to follow-up.</div>
                                  </div>
                              </div>
                          </div>
+                         
+                         <!-- Wireframe模块 -->
+                         <div class="wireframe">
+                             <h2 class="wireframe-title">Wireframe</h2>
+                             
+                             <div class="wireframe-content">
+                                 <div class="wireframe-image-container">
+                                     <img src="../Asset/crackinterview/Wireframe.png" alt="Wireframe" class="wireframe-image">
+                                 </div>
+                             </div>
+                         </div>
                      </div>
                  </div>
              </div>
@@ -2035,58 +2078,7 @@ If user responds → proceed to follow-up.</div>
                     
                     <!-- 下面容器：背景色F7F7F7，圆角24px -->
                     <div class="mock-interview-bottom-container">
-                        <!-- 第一个模块：Conversation design -->
-                        <div class="conversation-design-section">
-                            <!-- 标题 -->
-                            <h4 class="conversation-design-title">Conversation design</h4>
-                            
-                            <!-- 上部分：文字描述 -->
-                            <div class="conversation-design-top">
-                                <p class="conversation-design-description">
-                                    The conversation design for the AI mock interview system focuses on creating a natural, engaging, and psychologically realistic dialogue flow between the user and the AI interviewer.
-                                </p>
-                            </div>
-                            
-                            <!-- 下部分：左图片右文字 -->
-                            <div class="conversation-design-bottom">
-                                <!-- 左侧图片容器：30%宽度 -->
-                                <div class="conversation-design-image-container">
-                                    <img src="../Asset/crackinterview/Conversation design.avif" alt="Conversation Design" class="conversation-design-image">
-                                </div>
-                                
-                                <!-- 右侧文字容器：70%宽度 -->
-                                <div class="conversation-design-content">
-                                    <div class="conversation-feature">
-                                        <h4 class="conversation-feature-title">Role-Based Tone & Personality</h4>
-                                        <p class="conversation-feature-description">
-                                            The AI interviewer adopts different tones and language styles aligning with various company cultures or job roles. This enhances realism and user immersion.
-                                        </p>
-                                    </div>
-                                    
-                                    <div class="conversation-feature">
-                                        <h4 class="conversation-feature-title">Natural Language Flow</h4>
-                                        <p class="conversation-feature-description">
-                                            Dialogue patterns are optimized for clarity, rhythm, and conversational pacing—making interactions feel fluid and human-like, while still maintaining structure and assessment logic.
-                                        </p>
-                                    </div>
-                                    
-                                    <div class="conversation-feature">
-                                        <h4 class="conversation-feature-title">Adaptive Prompts</h4>
-                                        <p class="conversation-feature-description">
-                                            The system responds dynamically to user input, offering clarifications, follow-up questions, or redirection as needed to simulate the unpredictability of real interviews.
-                                        </p>
-                                    </div>
-                                    
-                                    <div class="conversation-feature">
-                                        <h4 class="conversation-feature-title">Feedback-Oriented Transitions</h4>
-                                        <p class="conversation-feature-description">
-                                            Each interview section ends with subtle transitions that guide the user into the next stage naturally, reducing friction and keeping users engaged throughout the session.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
+
                         <!-- AI Digital Interviewer 模块 -->
                         <div class="feature-module-2">
                             <div class="ai-digital-interviewer">
