@@ -598,6 +598,90 @@
             align-items: flex-start;
         }
         
+        /* Animation Demo 样式 */
+        .animation-demo {
+            margin-top: 40px;
+        }
+        
+        .animation-demo-title {
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: #171616;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        
+        .animation-demo-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .animation-demo-image-container {
+             width: 100%;
+             text-align: center;
+             display: flex;
+             justify-content: center;
+             align-items: center;
+         }
+         
+         .animation-demo-link {
+               display: inline-block;
+               transition: transform 0.3s ease;
+               width: 30%;
+               max-width: 600px;
+               position: relative;
+               overflow: hidden;
+               border-radius: 8px;
+           }
+         
+         .animation-demo-link:hover {
+             transform: scale(1.05);
+         }
+         
+         .animation-demo-image {
+             width: 100%;
+             height: auto;
+             display: block;
+             cursor: pointer;
+             transition: all 0.3s ease;
+             object-fit: contain;
+         }
+         
+         .animation-demo-link:hover .animation-demo-image {
+             content: url('../Asset/crackinterview/Animation_hover.png');
+         }
+        
+        .animation-demo-description {
+            text-align: center;
+        }
+        
+        .animation-demo-description p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #171616;
+            font-weight: 300;
+            margin: 0;
+        }
+        
+        .chatflow-note {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            border-radius: 4px;
+        }
+        
+        .chatflow-note p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #495057;
+            font-weight: 300;
+            margin: 0;
+            font-style: italic;
+        }
+        
         .chatflow-text {
             flex: 1;
             display: flex;
@@ -1658,6 +1742,19 @@
               .improvement-description {
                   font-size: 0.9rem;
               }
+              
+              /* Animation Demo响应式 */
+               .animation-demo-link {
+                   width: 80%;
+               }
+              
+              .animation-demo-title {
+                  font-size: 1.3rem;
+              }
+              
+              .animation-demo-description p {
+                  font-size: 0.9rem;
+              }
         }
         
         .detail-section {
@@ -1747,6 +1844,15 @@
             
             .project-image {
                 width: 320px;
+            }
+            
+            .chatflow-note {
+                margin-top: 20px;
+                padding: 15px;
+            }
+            
+            .chatflow-note p {
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -2030,6 +2136,27 @@ If user responds → proceed to follow-up.</div>
                                  
                                  <div class="chatflow-image-container">
                                      <img src="../Asset/crackinterview/Chatflow.png" alt="Chatflow" class="chatflow-image">
+                                 </div>
+                             </div>
+                         </div>
+                         
+                         <div class="chatflow-note">
+                             <p>Through iterative tuning and testing with ElevenLabs, we enhanced the naturalness and accuracy of the AI interviewer’s responses. As a UX designer, I focused on refining the dialogue flow to create a more realistic and immersive interview simulation experience, ensuring the AI could replicate the tone and rhythm of real interview scenarios.</p>
+                         </div>
+                         
+                         <!-- Animation Demo 模块 -->
+                         <div class="animation-demo">
+                             <h3 class="animation-demo-title">Interactive Demo</h3>
+                             
+                             <div class="animation-demo-content">
+                                 <div class="animation-demo-image-container">
+                                     <a href="https://elevenlabs.io/app/talk-to?agent_id=agent_3001k1ea0743fzzsb7qapacgmk90" target="_blank" class="animation-demo-link">
+                                         <img src="../Asset/crackinterview/Animation_Default.png" alt="Interactive Demo" class="animation-demo-image">
+                                     </a>
+                                 </div>
+                                 
+                                 <div class="animation-demo-description">
+                                     <p>Experience our AI interviewer in action. Click to try the interactive demo and see how natural conversation flows work in practice.</p>
                                  </div>
                              </div>
                          </div>
