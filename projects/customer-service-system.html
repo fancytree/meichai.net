@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integrated Chat and Customer Service System - Mei Chai</title>
+    <meta name="description" content="Explore Mei Chai's user-centered, innovative projects, from healthcare and VR education to interactive exhibits, showcasing creativity and functional design.">
+    
+    <!-- 网站图标 -->
+    <link href="../Asset/profile.png" rel="icon">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Integrated Chat and Customer Service System - Mei Chai">
+    <meta property="og:description" content="Explore Mei Chai's user-centered, innovative projects, from healthcare and VR education to interactive exhibits, showcasing creativity and functional design.">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 组件加载器 -->
+    <script>
+        const componentLoader = {
+            async loadComponent(path) {
+                try {
+                    const response = await fetch(path);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return await response.text();
+                } catch (error) {
+                    console.error('Error loading component:', error);
+                    return '';
+                }
+            },
+
+            executeScripts(container) {
+                const scripts = container.querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.head.appendChild(newScript);
+                    // 立即执行脚本
+                    if (!script.src) {
+                        try {
+                            eval(script.textContent);
+                        } catch (e) {
+                            console.error('Error executing script:', e);
+                        }
+                    }
+                });
+            },
+
+            async loadAllComponents() {
+                try {
+                    // 加载导航栏
+                    const navbarHtml = await this.loadComponent('../components/navbar.html');
+                    const navbarContainer = document.getElementById('navbar-container');
+                    if (navbarContainer && navbarHtml) {
+                        navbarContainer.innerHTML = navbarHtml;
+                        // 执行导航栏中的脚本
+                        this.executeScripts(navbarContainer);
+                        // 手动初始化导航栏
+                        if (typeof initNavbar === 'function') {
+                            initNavbar();
+                        }
+                    }
+
+                    // 加载底部栏
+                    const footerHtml = await this.loadComponent('../components/footer.html');
+                    const footerContainer = document.getElementById('footer-container');
+                    if (footerContainer && footerHtml) {
+                        footerContainer.innerHTML = footerHtml;
+                        // 执行底部栏中的脚本
+                        this.executeScripts(footerContainer);
+                    }
+                } catch (error) {
+                    console.error('Error loading components:', error);
+                }
+            }
+        };
+
+        // 添加页面跳转功能
+        function initPageNavigation() {
+            // 确保所有内部链接都能正常工作
+            document.addEventListener('click', function(e) {
+                const target = e.target.closest('a');
+                if (target && target.href) {
+                    // 处理内部页面跳转
+                    if (target.href.includes('#') && target.href.includes(window.location.pathname)) {
+                        e.preventDefault();
+                        const targetId = target.href.split('#')[1];
+                        const targetElement = document.getElementById(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }
+                }
+            });
+
+
+
+
+        }
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #171616;
+            background-color: #fff;
+            padding-top: 118px;
+        }
+        
+        /* 平滑滚动 */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* 锚点定位调整 */
+        .module-section {
+            scroll-margin-top: 140px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .main-content {
+            background-color: #F9FBFD;
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+            padding: 3rem 0;
+        }
+        
+        .module-section {
+            padding: 3rem 2rem;
+            border-bottom: 1px solid #E5E5E5;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+        
+        .module-section:last-child {
+            border-bottom: none;
+        }
+        
+        .module-title {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            color: #171616;
+        }
+        
+        .project-header {
+            margin-bottom: 3rem;
+        }
+        
+        .project-title {
+            font-size: 4rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            color: #171616;
+        }
+        
+        .project-intro-container {
+            border-bottom: 1px solid #E5E5E5;
+            padding-bottom: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .project-description {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: #171616;
+            width: 64%;
+            font-weight: 300;
+        }
+        
+        .project-meta {
+            display: flex;
+            align-items: flex-start;
+            gap: 0;
+            margin-bottom: 4rem;
+            margin-top: 2rem;
+        }
+        
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            padding: 0 24px;
+        }
+        
+        .meta-item:first-child {
+            padding-left: 0;
+        }
+        
+        .meta-item:not(:last-child) {
+            border-right: 1px solid #E5E5E5;
+        }
+        
+        .meta-label {
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+            font-weight: 300;
+        }
+        
+        .meta-value {
+            font-size: 1rem;
+            font-weight: 300;
+            color: #171616;
+        }
+        
+        .content-section {
+            display: grid;
+            grid-template-columns: 60% 40%;
+            gap: 4rem;
+            margin-bottom: 4rem;
+            align-items: start;
+        }
+        
+        .left-content {
+            padding-right: 2rem;
+            width: 100%;
+        }
+        
+        .right-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: sticky;
+            top: 150px;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            color: #171616;
+        }
+        
+        .role-list {
+            list-style: none;
+            margin-bottom: 3rem;
+            counter-reset: role-counter;
+        }
+        
+        .role-item {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            position: relative;
+            line-height: 1.5;
+            color: #171616;
+            font-size: 16px;
+            font-weight: 300;
+        }
+        
+        .role-item::before {
+            content: counter(role-counter) ".";
+            counter-increment: role-counter;
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-weight: 300;
+            color: #171616;
+        }
+        
+        .role-title {
+            font-weight: 600;
+            color: #171616;
+        }
+        
+        .conclusion-section {
+            margin-top: 4rem;
+        }
+        
+        .conclusion-content {
+            width: 100%;
+        }
+        
+        .conclusion-content .project-description {
+            width: 100%;
+            font-size: 16px;
+        }
+        
+        .project-image {
+            width: 480px;
+            height: auto;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 90px;
+            }
+            
+            .container {
+                padding: 0 16px;
+            }
+            
+            .project-title {
+                font-size: 2.5rem;
+            }
+            
+            .project-meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .meta-item {
+                padding: 0;
+                border-right: none;
+                border-bottom: 1px solid #E5E5E5;
+                padding-bottom: 1rem;
+            }
+            
+            .meta-item:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+            
+            .content-section {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .left-content {
+                padding-right: 0;
+            }
+            
+            .right-content {
+                position: static;
+                margin-top: 2rem;
+            }
+            
+            .project-image {
+                width: 320px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏组件容器 -->
+    <div id="navbar-container"></div>
+    
+    <!-- 主要内容 -->
+    <main class="container">
+        <!-- 项目头部 -->
+        <div class="project-header" style="margin-top: 120px;">
+            <div class="project-intro-container">
+                <h1 class="project-title">Integrated Chat and Customer Service System</h1>
+                <p class="project-description">
+                    This system is a multi-role chat platform for regular users, promoters, and support agents. It enables real-time customer support and communication between promoters and their subordinates. An admin panel handles user roles, chat logs, and service workflows.
+                </p>
+            </div>
+            
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Team size:</span>
+                    <span class="meta-value">1</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Duration:</span>
+                    <span class="meta-value">4 weeks</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- My role 部分 -->
+        <div class="content-section">
+            <div class="left-content">
+                <h2 class="section-title">My role</h2>
+                
+                <p class="project-description" style="margin-bottom: 2rem; width: 100%;">
+                    As the lead UX designer, I was responsible for the full-cycle design of this integrated chat and customer service system from requirements analysis to wireframing, prototyping, and developer handoff.
+                </p>
+                
+                <ol class="role-list">
+                <li class="role-item">
+                        <span class="role-title">Requirements Analysis:</span> Work closely with stakeholders to define core requirements for regular users, promoters, and support agents. Through interviews and workflow reviews, I identified key needs such as real-time messaging, multi-session handling, and role-based access.
+                </li>
+                <li class="role-item">
+                        <span class="role-title">User Flow Design:</span> Mapped distinct workflows for three user types — regular users, promoters, and support agents — ensuring clarity and role-based logic.
+                </li>
+                <li class="role-item">
+                        <span class="role-title">Wireframing & Prototyping:</span> Created low- to high-fidelity wireframes for user-facing chat interfaces and backend dashboards.
+                </li>
+                <li class="role-item">
+                        <span class="role-title">Interaction Design:</span> Designed intuitive messaging interactions, session handling, and notification behaviors tailored to each role.
+                    </li>
+                    <li class="role-item">
+                        <span class="role-title">Collaboration & Handoff:</span> Worked cross-functionally with developers to ensure design feasibility, and prepared detailed specs for smooth handoff.
+                    </li>
+                    <li class="role-item">
+                        <span class="role-title">System Thinking:</span> Helped structure the platform logic between frontend clients, customer support backend, and admin console.
+                </li>
+            </ol>
+                    </div>
+            <div class="right-content">
+                <!-- 项目图片展示 -->
+                <img src="../Asset/Clarity.avif" alt="Customer Service System Project" class="project-image">
+            </div>
+        </div>
+        
+        <!-- 主要内容区域 -->
+        <div class="main-content">
+            
+            <!-- Requirements Analysis 模块 -->
+            <div class="module-section" id="requirements-analysis">
+                <h1 style="text-align: center; font-size: 2.5rem; font-weight: 300; margin-bottom: 2rem; color: #171616;">Requirements Analysis</h1>
+                
+                                <div style="display: flex; justify-content: center; margin-top: 2rem;">
+                    <div style="max-width: 920px; text-align: left; color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word;">
+                        I worked closely with stakeholders to define core requirements for regular users, promoters, and support agents. Through interviews and workflow reviews, I identified key needs such as real-time messaging, multi-session handling, and role-based access. These insights shaped the user flows and laid the groundwork for a scalable and role-specific design solution.
+                    </div>
+                </div>
+                    
+                <div style="width: 100%; height: 100%; flex-direction: column; justify-content: flex-start; align-items: center; gap: 48px; display: inline-flex; margin-top: 4rem;">
+                    <h3 style="text-align: center; color: black; font-size: 36px; font-family: Inter; font-weight: 400; word-wrap: break-word;">User Role Map</h3>
+                    <div style="width: 920px; justify-content: center; display: flex; flex-direction: column"><span style="color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word">To support diverse user types while maintaining clarity and operational efficiency, I designed a four-role map with clearly defined permissions and interaction boundaries.<br/></span><span style="color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word">End User: Can initiate support requests, describe issues, and provide feedback. Their access is intentionally limited to prevent exposure to affiliate or admin data.<br/>Affiliate: Focused on managing downline communication, with tools to view engagement and conversation history per user. They operate independently of other affiliates.<br/>Customer Support: Handles real-time queries, tags issues, and escalates when needed. To ensure service quality, they cannot independently end sessions or view affiliate relationships.<br/>Admin: Manages platform configuration, agent permissions, and performance monitoring. They have no direct involvement in user conversations to maintain role separation.<br/></span><span style="color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word"><br/>This structure balances task relevance, information security, and workflow clarity, ensuring that each role has exactly what it needs—no more, no less.</span></div>
+                    <div style="width: 1200px; height: 814px; padding: 24px; background: white; border-radius: 24px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 10px; display: flex">
+                        <img style="align-self: stretch; height: 767.69px" src="../Asset/customer-service-system/User Role Map.jpg" />
+                    </div>
+                </div>
+             </div>
+             
+             <!-- User Journey Map 模块 -->
+             <div class="module-section">
+                                   <h3 style="text-align: center; color: black; font-size: 36px; font-family: Inter; font-weight: 400; word-wrap: break-word;">User Journey Map</h3>
+                 
+                 <div style="display: flex; justify-content: center; margin-top: 2rem;">
+                     <div style="max-width: 920px; text-align: left; color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word;">
+                         To design a chat system that supports both platform users and customer support agents, I mapped out two parallel user journeys. This helped identify emotional pain points, system limitations, and key optimization opportunities across roles.
+                     </div>
+                 </div>
+                 
+                                   <div style="width: 100%; height: 100%; flex-direction: column; justify-content: flex-start; align-items: center; gap: 48px; display: inline-flex; margin-top: 4rem;">
+                      <div style="width: 1200px; height: 814px; padding: 24px; background: white; border-radius: 24px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 10px; display: flex">
+                          <img style="align-self: stretch; height: 767.69px" src="../Asset/customer-service-system/End User Journey.png" />
+                      </div>
+                  </div>
+                  
+                  <div style="width: 920px; height: 100%; flex-direction: column; justify-content: flex-start; align-items: center; gap: 48px; display: flex; margin: 4rem auto;">
+                      <div style="width: 920px; justify-content: center; display: flex; flex-direction: column; color: black; font-size: 28px; font-family: Inter; font-weight: 400; word-wrap: break-word">End User Journey</div>
+                      <div style="width: 920px; justify-content: center; display: flex; flex-direction: column"><span style="color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word">The end user's experience begins with uncertainty and often anxiety about getting help. By visualizing the entire journey—from chat initiation to resolution—I identified key friction points such as unclear entry points, long waiting times, and repetitive transfers.<br/><br/>Through this, I proposed:<br/></span><span style="color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word">More prominent help entry placement<br/>Wait time indicators to manage expectations<br/>Clear session handoff with context preservation<br/>Satisfaction feedback prompts to close the loop</span></div>
+                      <div style="padding-left: 24px; padding-right: 24px; border-left: 4px #6444DC solid; justify-content: center; align-items: center; gap: 10px; display: inline-flex">
+                          <div style="width: 920px; justify-content: center; display: flex; flex-direction: column; color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word">Human-centered automation can balance speed and clarity, while small UX details like welcome messages or emoji-enhanced replies help reduce perceived support friction.</div>
+                      </div>
+                  </div>
+                </div>
+                 
+                <div style="width: 100%; flex-direction: column; justify-content: flex-start; align-items: center; gap: 48px; display: flex; margin-top: 4rem;">
+   <div style="width: 1200px; height: 814px; padding: 24px; background: white; border-radius: 24px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 10px; display: flex">
+       <img style="align-self: stretch; height: 767.69px" src="../Asset/customer-service-system/Customer Support Journey.png" />
+   </div>
+</div>
+
+<div style="width: 100%; flex-direction: column; justify-content: flex-start; align-items: center; gap: 48px; display: flex; margin-top: 4rem;">
+    <div style="width: 920px; justify-content: center; display: flex; flex-direction: column; color: black; font-size: 28px; font-family: Inter; font-weight: 400; word-wrap: break-word">Customer Support Journey</div>
+    <div style="width: 920px; justify-content: center; display: flex; flex-direction: column"><span style="color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word">For support agents, the journey is fast-paced and task-intensive. I mapped their workflow from receiving a session to either resolving or escalating it. Challenges identified include inconsistent context visibility, lack of smart reply tools, and uncertainty around session closure.<br/><br/>Design proposals include:<br/></span><span style="color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word">Smart macros and template suggestions<br/>Auto-transfer with session context<br/>Canned replies synced with internal notes<br/>Session-end signal triggered by user behavior</span></div>
+    <div style="padding-left: 24px; padding-right: 24px; border-left: 4px #6444DC solid; justify-content: center; align-items: center; gap: 10px; display: flex">
+        <div style="width: 920px; justify-content: center; display: flex; flex-direction: column; color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word">Empowering agents with the right tools—without overwhelming them—drives both efficiency and service quality. System automation should assist, not replace, human expertise.</div>
+    </div>
+</div>
+
+<div style="width: 100%; flex-direction: column; justify-content: flex-start; align-items: center; gap: 48px; display: flex; margin-top: 4rem;">
+    <div style="flex-direction: column; justify-content: flex-start; align-items: center; gap: 48px; display: flex">
+        <div style="text-align: center; justify-content: center; display: flex; flex-direction: column; color: black; font-size: 36px; font-family: Inter; font-weight: 400; word-wrap: break-word">Admin System Scope Map</div>
+        <div style="width: 920px; justify-content: center; display: flex; flex-direction: column; color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word">To clarify the functional scope of the backend and ensure alignment with user roles and operational logic, I created a system architecture diagram centered on the Admin's responsibilities.</div>
+    </div>
+    <div style="flex-direction: column; justify-content: flex-start; align-items: center; gap: 48px; display: flex">
+        <img style="width: 1180px; height: 580px; border-radius: 24px" src="../Asset/customer-service-system/Admin System Scope Map.jpg" />
+        <div style="width: 920px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 48px; display: flex">
+            <div style="width: 920px; justify-content: center; display: flex; flex-direction: column"><span style="color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word">This visual map helped define the three core functional domains of the admin console:<br/></span><span style="color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word">Support Agent Management – Role setup, permissions, shift management<br/>Customer Service Monitoring – Real-time visibility and KPI tracking<br/>Customer Conversation Management – Standardization of chat behavior and automation logic</span></div>
+            <div style="padding-left: 24px; padding-right: 24px; border-left: 4px #6444DC solid; justify-content: center; align-items: center; gap: 10px; display: flex">
+                <div style="width: 920px; justify-content: center; display: flex; flex-direction: column; color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word">This architecture diagram served as a foundation for subsequent design phases, including information architecture (IA), interface layout, and feature prioritization.</div>
+            </div>
+        </div>
+    </div>
+</div>
+                           
+                             <!-- Design Process 模块 -->
+              <div class="module-section" id="design-process">
+                  <div style="width: 100%; flex-direction: column; justify-content: flex-start; align-items: center; gap: 48px; display: flex">
+                     <div style="align-self: stretch; text-align: center; justify-content: center; display: flex; flex-direction: column; color: black; font-size: 48px; font-family: Inter; font-weight: 400; word-wrap: break-word">Design Process</div>
+                     <div style="width: 920px; flex-direction: column; justify-content: flex-start; align-items: center; gap: 48px; display: flex">
+                         <div style="width: 920px; justify-content: center; display: flex; flex-direction: column; color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word">In the first iteration of this project, I focused on designing three core system interfaces: End User, Customer Support, and Admin. Each interface serves a distinct role within the support ecosystem, requiring tailored workflows, interaction models, and permission logic.<br/>To ensure a scalable and role-specific experience, I mapped each role to its responsibilities and operational touchpoints. This role-based foundation shaped the design decisions that followed—from information architecture to interface prototyping.<br/>This initial scope was defined based on system dependency mapping and priority user journeys identified during requirements analysis.</div>
+                         <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; border-left: 4px #6444DC solid; justify-content: center; align-items: center; gap: 10px; display: flex">
+                             <div style="width: 920px; justify-content: center; display: flex; flex-direction: column; color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word">The Affiliate Chat Interface, which handles communications between Affiliates and their downlines, is scheduled for a future iteration to maintain modular rollout and system clarity.</div>
+                         </div>
+                     </div>
+                 </div>
+               </div>
+               
+               <!-- Cross-role User Flows: Swimlane Map 模块 -->
+               <div class="module-section">
+                   <div style="width: 100%; flex-direction: column; justify-content: flex-start; align-items: center; gap: 48px; display: flex">
+                       <div style="text-align: center; justify-content: center; display: flex; flex-direction: column; color: black; font-size: 36px; font-family: Inter; font-weight: 400; word-wrap: break-word">Cross-role User Flows: Swimlane Map</div>
+                       <div style="width: 920px; justify-content: center; display: flex; flex-direction: column; color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word">To visualize role-specific responsibilities and system logic across the customer service lifecycle, I used swimlane diagrams. These helped identify dependencies, clarify handoff rules, and inform permission-aware interface design for each user type.</div>
+                       <div style="width: 100%; overflow: hidden; border-radius: 24px; flex-direction: column; justify-content: flex-start; align-items: center; gap: 48px; display: flex">
+                             <img style="align-self: stretch; height: 1683.30px" src="../Asset/customer-service-system/Cross-role User Flows.jpg" />
+                         </div>
+                         
+                         <!-- End User – Mobile & Desktop 部分 -->
+                         <div style="width: 100%; flex-direction: column; justify-content: flex-start; align-items: center; gap: 32px; display: flex; margin-top: 2rem;">
+                             <div style="flex-direction: column; justify-content: flex-start; align-items: center; gap: 32px; display: flex">
+                                 <div style="text-align: center; justify-content: center; display: flex; flex-direction: column; color: black; font-size: 36px; font-family: Inter; font-weight: 400; word-wrap: break-word">End User – Mobile & Desktop</div>
+                                 <div style="width: 920px; justify-content: center; display: flex; flex-direction: column; color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word">To support seamless access across platforms, I designed the End User interface with full responsiveness and contextual adaptation for both mobile and desktop users. The goal was to make support feel immediate, reassuring, and human—regardless of device.</div>
+                             </div>
+                             <img style="width: auto; height: auto; max-width: 1200px; object-fit: contain;" src="../Asset/customer-service-system/End User – Mobile & Desktop.png" />
+                          </div>
+                          
+                          <!-- Customer Support - Desktop 部分 -->
+                          <div style="width: 100%; flex-direction: column; justify-content: flex-start; align-items: center; gap: 32px; display: flex; margin-top: 2rem;">
+                              <div style="text-align: center; justify-content: center; display: flex; flex-direction: column; color: black; font-size: 36px; font-family: Inter; font-weight: 400; word-wrap: break-word">Customer Support - Desktop</div>
+                              <div style="width: 920px; justify-content: center; display: flex; flex-direction: column; color: black; font-size: 18px; font-family: Inter; font-weight: 300; line-height: 27px; word-wrap: break-word">The Customer Support interface was designed for speed, clarity, and control in a multi-tasking environment. Agents need to manage multiple live sessions, maintain context, and respond quickly—without losing track of priorities.</div>
+                              <img style="width: auto; height: auto; max-width: 100%; max-height: 800px; object-fit: contain;" src="../Asset/customer-service-system/Customer Support - Desktop.png" />
+                          </div>
+                      </div>
+                </div>
+                      
+             <!-- Conclusion 模块 -->
+            <div class="module-section" id="conclusion">
+                <h2 class="module-title">Conclusion</h2>
+                <div class="left-content">
+                    <p class="project-description" style="width: 100%;">
+                        As the lead UX designer, I was responsible for the full-cycle design of this integrated chat and customer service system from requirements analysis to wireframing, prototyping, and developer handoff.
+                    </p>
+                    <p class="project-description" style="width: 100%;">
+                        My responsibilities included working closely with stakeholders to define core requirements, mapping distinct workflows for three user types, creating wireframes and prototypes, designing intuitive interactions, collaborating with developers, and helping structure the platform logic between frontend clients, customer support backend, and admin console.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+    </main>
+    
+    <!-- 底部组件容器 -->
+    <div id="footer-container"></div>
+    
+    <script>
+        // 初始化组件
+        document.addEventListener('DOMContentLoaded', function() {
+            // 加载导航栏和底部栏
+            componentLoader.loadAllComponents();
+            
+            // 初始化页面导航功能
+            initPageNavigation();
+        });
+    </script>
+</body>
+</html>

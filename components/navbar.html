@@ -174,23 +174,26 @@ function initNavbar() {
     
     window.addEventListener('scroll', handleScroll);
     
-    // 设置当前页面的active状态
-    function setActiveNavLink() {
-        const currentPage = window.location.pathname;
-        const navLinks = document.querySelectorAll('.nav-link');
-        
-        navLinks.forEach(link => {
-            link.classList.remove('active');
+            // 设置当前页面的active状态
+        function setActiveNavLink() {
+            const currentPage = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
             
-            if (currentPage.includes('about.html') && link.dataset.page === 'about') {
-                link.classList.add('active');
-            } else if (currentPage === '/' || currentPage.includes('index.html')) {
-                if (link.dataset.page === 'work') {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                
+                if (currentPage.includes('about.html') && link.dataset.page === 'about') {
+                    link.classList.add('active');
+                } else if (currentPage === '/' || currentPage.includes('index.html')) {
+                    if (link.dataset.page === 'work') {
+                        link.classList.add('active');
+                    }
+                } else if (currentPage.includes('projects/') && link.dataset.page === 'work') {
+                    // 在项目页面中，Work 链接应该显示为激活状态
                     link.classList.add('active');
                 }
-            }
-        });
-    }
+            });
+        }
     
     // 页面加载时设置active状态
     setActiveNavLink();
